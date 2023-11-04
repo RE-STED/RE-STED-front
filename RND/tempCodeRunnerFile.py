@@ -1,0 +1,1 @@
+cv2.setMousePosition("Image", (cx,cy))

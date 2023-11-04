@@ -4,13 +4,13 @@
 >
 
 ```
-bash
+zsh
 // conda
 conda create --name RESTED python=3.11
 ```
 
 ```
-bash
+zsh
 //conda activate for zsh
 conda init zsh
 zsh -l

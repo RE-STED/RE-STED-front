@@ -11,8 +11,11 @@ conda create --name RESTED python=3.11
 
 ```
 bash
-// python
-!pip install opencv-python
-pip install PyQt6
-pip install mediapipe
+//conda activate for zsh
+conda init zsh
+zsh -l
+conda activate RESTED
+
+// install packages
+python -m pip install opencv-python mediapipe PyQt6
 ```

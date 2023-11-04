@@ -1,7 +1,7 @@
 # hand tracking 하는 모델을 만들어서 사용할 수 있도록 하는 모듈
 
-import cv2
 import mediapipe as mp
+import cv2
 import time
 
 cam = cv2.VideoCapture(0)

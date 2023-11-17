@@ -6,9 +6,10 @@ app = QGuiApplication(sys.argv)
 screenGeometry = QGuiApplication.primaryScreen().geometry()
 
 while True:
-    x, y = 100, 100
+    x, y = 1512, 982
     print("Setting cursor position:", x, y)
     QCursor.setPos(x, y)
     QGuiApplication.processEvents()  # Process Qt events
-    print(screenGeometry.x(), screenGeometry.y())q
+    print(screenGeometry.x(), screenGeometry.y())
+    print()
     time.sleep(2)

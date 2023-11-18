@@ -11,5 +11,5 @@ while True:
     QCursor.setPos(x, y)
     QGuiApplication.processEvents()  # Process Qt events
     print(screenGeometry.x(), screenGeometry.y())
-    print()
+    print(Q)
     time.sleep(2)

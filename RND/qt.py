@@ -1,7 +1,7 @@
 import os, sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
-from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication
-from PyQt6.QtCore import QThread, Qt, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton
+from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication, QColor
+from PyQt6.QtCore import QThread, Qt, pyqtSignal, QSize, QPropertyAnimation, QEasingCurve
 import mediapipe as mp
 import cv2, time
 
@@ -39,8 +39,8 @@ class Thread(QThread):
 
 
 class HandTrackingWidget(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.screen_geometry = QGuiApplication.primaryScreen().geometry()
         #print("handtrack widget size", self.screen_geometry.width(), self.screen_geometry.height())
  
@@ -71,7 +71,8 @@ class HandTrackingWidget(QWidget):
             #print(self.image_height, self.image_width)
             #print(self.screen_geometry.x(), self.screen_geometry.y())
             #print(self.mapToGlobal(self.video_label.pos()).x(), self.mapToGlobal(self.video_label.pos()).y())
-            QCursor.setPos(x, y)
+
+            QCursor.setPos(int(x), int(y))
             QGuiApplication.processEvents()
 
     def setImage(self, image, height, width):
@@ -86,26 +87,138 @@ class HandTrackingWidget(QWidget):
 
 
 
+class ClickableLabel(QLabel):
+    def __init__(self, index, text, parent=None):
+        super().__init__(text, parent)
+        self.index = index
+        self.opacity_effect = QGraphicsOpacityEffect(self)
+        self.opacity_effect.setOpacity(0.5)  # 50% opacity
+        self.setGraphicsEffect(self.opacity_effect)
+        
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            print(f'Label {self.index} clicked')
+
+
+
+class AppLabels(QWidget):
+    def __init__(self, parent=None):
+        super(AppLabels, self).__init__(parent)
+
+        self.vlayout = QVBoxLayout(self)
+        self.vlayout.addStretch()
+
+        for i in range(2):  # For example, create 3 labels
+            #label = QLabel(f'Label {i+1}', self)
+            label = ClickableLabel(i+1, f'Label {i+1}', self)
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            label.setStyleSheet('background: black; color: white; font-size: 20px; border-radius: 1.5em;')
+            label.setFixedSize(250, 250)
+
+            self.vlayout.addWidget(label)
+            print(label.size().width(), label.size().height())
+
+        self.vlayout.addStretch()
+        # create a horizontal layout and add stretch so everything is 
+        # pushed to the right
+
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+    
+        self.resize(self.sizeHint())
+
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.getFullScreen()
-        self.setStyleSheet("background-color: black;")  # Set background color to grey
-        self.central_widget = HandTrackingWidget()
-        #self.central_widget.resize(QGuiApplication.primaryScreen().geometry())
-        self.setCentralWidget(self.central_widget)
         self.setWindowTitle('Hand Tracking with PyQt')
+        self.getFullScreen()
+        self.setStyleSheet("background-color: black;")  # Set background color to black
+        
+        self.handTrackWidget = HandTrackingWidget(self)
+        
+        # Create a stacked layout and add the widgets
+        self.layout = QStackedLayout()
+        self.layout.addWidget(self.handTrackWidget)
+
+        central_widget = QWidget(self)
+        central_widget.setLayout(self.layout)
+        self.setCentralWidget(central_widget)
+
+        #self.layout.setCurrentWidget(self.appLabel)
+        self.addAppLabelWidget()
+        self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
+        
 
     def getFullScreen(self):
-        screen = QApplication.primaryScreen()
         self.showFullScreen()
-        screen_geometry = screen.availableGeometry()
 
-        # 전체 화면으로 윈도우를 설정
-        print(QApplication.primaryScreen().size().width(), QApplication.primaryScreen().size().height())
-        print(screen_geometry.width(), screen_geometry.height())
-        self.setGeometry(screen_geometry)
+
+    class HoverButton(QPushButton):
+        def __init__(self, text, parent=None):
+            super().__init__(text, parent)
+            self.defaultSize = QSize(110, 110)
+            self.hoverSize = QSize(115, 110)
+            self.setStyleSheet("background-color: black; color: white; font-size: 20px; border-radius: 1.5em;")
+            self.setMinimumSize(self.defaultSize)
+            # Create a QGraphicsOpacityEffect object
+            self.opacity_effect = QGraphicsOpacityEffect(self)
+            # Set the opacity level. The value should be between 0 (completely transparent) and 1 (completely opaque).
+            self.opacity_effect.setOpacity(0.2)
+            # Apply the opacity effect to the button
+            self.setGraphicsEffect(self.opacity_effect)
+
+            self.animation = QPropertyAnimation(self, b"size", self)
+            self.animation.setDuration(200)
+            self.animation.setEasingCurve(QEasingCurve.Type.InOutQuart)
+
+
+        def enterEvent(self, event):
+            self.opacity_effect.setOpacity(0.6)
+            self.setGraphicsEffect(self.opacity_effect)
+            self.animation.setStartValue(self.size())
+            self.animation.setEndValue(self.hoverSize)
+            self.animation.start()
+
+        def leaveEvent(self, event):
+            self.opacity_effect.setOpacity(0.2)
+            self.setGraphicsEffect(self.opacity_effect)
+            self.animation.setStartValue(self.size())
+            self.animation.setEndValue(self.defaultSize)
+            self.animation.start()
+
+
+
+    def addAppLabelWidget(self):
+        appLabel = AppLabels(self)
+
+        appLabelLayout = QHBoxLayout()
+        appLabelLayout.addStretch()
         
+        # Create a button for show and hide the appLabel
+        self.btn = self.HoverButton("<", self)
+        appLabelLayout.addWidget(self.btn)
+        self.btn.clicked.connect(lambda: self.showAppLabel(appLabel))
+
+        appLabelLayout.addWidget(appLabel)
+        # Create a widget for the appLabel layout
+        appLabelWidget = QWidget(self)
+        appLabelWidget.setLayout(appLabelLayout)
+        appLabelWidget.setStyleSheet("background-color: transparent;")  # Set background color to transparent
+
+        appLabel.hide()
+        self.layout.addWidget(appLabelWidget)
+        self.layout.setCurrentWidget(appLabelWidget)
+    
+
+    def showAppLabel(self, appLabel):
+        if self.btn.text() == "<":
+            self.btn.setText(">")
+            appLabel.show()
+        else:
+            self.btn.setText("<")
+            appLabel.hide()
 
 
 if __name__ == '__main__':

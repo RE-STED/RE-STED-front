@@ -15,7 +15,7 @@ class Thread(QThread):
         self.size = size
 
     def run(self):
-        camera = cv2.VideoCapture(0)
+        camera = cv2.VideoCapture(1)
         while True:
             ret, frame = camera.read()
             if ret:

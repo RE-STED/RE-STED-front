@@ -17,5 +17,5 @@ zsh -l
 conda activate RESTED
 
 // install packages
-python -m pip install opencv-python mediapipe PyQt6
+python -m pip install opencv-python mediapipe PyQt6 PyUserInput
 ```

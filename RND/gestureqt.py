@@ -8,6 +8,37 @@ from collections import deque, Counter
 import pymouse
 
 
+# class Thread(QThread):
+#     changePixmap = pyqtSignal(QImage, int, int)
+
+#     def __init__(self, size, gesture_recognizer):
+#         super().__init__()
+#         self.gesture_recognizer = gesture_recognizer
+#         self.size = size
+
+#     def run(self):
+#         camera = cv2.VideoCapture(0)
+#         while True:
+#             ret, frame = camera.read()
+#             if ret:
+#                 # https://stackoverflow.com/a/55468544/6622587
+#                 imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#                 imgRGB = cv2.flip(imgRGB, 1)
+#                 h, w, ch = imgRGB.shape
+#                 bytesPerLine = ch * w
+
+#                 convertToQtFormat = QImage(imgRGB.data, w, h, bytesPerLine, QImage.Format.Format_RGB888)
+#                 #print(self.size.width(), self.size.height())
+#                 scaledImage = convertToQtFormat.scaledToWidth(QApplication.primaryScreen().size().width(),
+#                                              Qt.TransformationMode.FastTransformation)
+                
+#                 self.changePixmap.emit(scaledImage, scaledImage.width(), scaledImage.height())
+
+#                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=imgRGB)
+#                 frame_timestamp_ms = int(1000 * time.time())
+#                 self.gesture_recognizer.recognize_async(mp_image, frame_timestamp_ms)
+
+
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage, int, int)
 
@@ -15,30 +46,43 @@ class Thread(QThread):
         super().__init__()
         self.gesture_recognizer = gesture_recognizer
         self.size = size
+        self.Cam = Cam()
 
     def run(self):
-        camera = cv2.VideoCapture(0)
         while True:
-            ret, frame = camera.read()
-            if ret:
+            # ret, frame = camera.read()
+            if 1:
                 # https://stackoverflow.com/a/55468544/6622587
-                imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                imgRGB = cv2.flip(imgRGB, 1)
-                h, w, ch = imgRGB.shape
+                frame = self.Cam.capture()
+                h, w, ch = frame.shape
                 bytesPerLine = ch * w
 
-                convertToQtFormat = QImage(imgRGB.data, w, h, bytesPerLine, QImage.Format.Format_RGB888)
+                convertToQtFormat = QImage(frame.data, w, h, bytesPerLine, QImage.Format.Format_RGB888)
                 #print(self.size.width(), self.size.height())
                 scaledImage = convertToQtFormat.scaledToWidth(QApplication.primaryScreen().size().width(),
                                              Qt.TransformationMode.FastTransformation)
                 
                 self.changePixmap.emit(scaledImage, scaledImage.width(), scaledImage.height())
 
-                mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=imgRGB)
+                mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
                 frame_timestamp_ms = int(1000 * time.time())
                 self.gesture_recognizer.recognize_async(mp_image, frame_timestamp_ms)
 
 
+class Cam():
+    def __init__(self):
+        super().__init__()
+        self.cam = cv2.VideoCapture(0)
+        
+    def capture(self):
+        ret, frame = self.cam.read()
+        if ret:
+            # color change
+            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # flip
+            img = cv2.flip(img, 1)
+            return img
+            
 
 class HandTrackingWidget(QWidget):
     def __init__(self, parent=None):
@@ -88,10 +132,10 @@ class HandTrackingWidget(QWidget):
                     #if prev_5_gesture_queue's the most first element is pinch, then click
                     prev_5_gesture_list = list(self.prev_5_gesture_queue)
                     common_gesture = Counter([value[0] for value in prev_5_gesture_list]).most_common(1)
-                    if(common_gesture[0][0] == 'pinch' and common_gesture[0][1] >= 4):
+                    if(common_gesture[0][0] == 'pinch' and common_gesture[0][1] >= 3):
                         #calculate the average score of pinch
                         pinch_score = statistics.mean([value[1] for value in prev_5_gesture_list if value[0] == 'pinch'])
-                        if(pinch_score > 0.65):
+                        if(pinch_score > 0.6):
                             #print("left click", QCursor.pos())
                             # left click
                             pymouse.PyMouse().press(int(x), int(y), 1)

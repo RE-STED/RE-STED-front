@@ -7,9 +7,6 @@ import cv2, time, statistics
 from collections import deque, Counter
 import pymouse
 
-
-
-
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage, int, int)
 

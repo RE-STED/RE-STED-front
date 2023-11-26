@@ -1,26 +1,31 @@
-import os, statistics, time
-from collections import deque, Counter
+import os, sys
+sys.path.append('src')
 
-import cv2
+from cam import Cam
+
+from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QGraphicsOpacityEffect
+from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication
+from PyQt6.QtCore import QThread, Qt, pyqtSignal
 import mediapipe as mp
+import time, statistics
+from collections import deque, Counter
 import pymouse
-from PyQt6.QtCore import QThread, pyqtSignal, Qt
 
-class Thread(QThread):
+class GestureThread(QThread):
     changePixmap = pyqtSignal(QImage, int, int)
 
-    def __init__(self, size, gesture_recognizer):
+    def __init__(self, size, gesture_recognizer, cam=None):
         super().__init__()
         self.gesture_recognizer = gesture_recognizer
         self.size = size
-        self.Cam = Cam()
+        self.cam = cam
 
     def run(self):
         while True:
             # ret, frame = camera.read()
             if 1:
                 # https://stackoverflow.com/a/55468544/6622587
-                frame = self.Cam.capture()
+                frame = self.cam.capture()
                 h, w, ch = frame.shape
                 bytesPerLine = ch * w
 
@@ -35,9 +40,12 @@ class Thread(QThread):
                 frame_timestamp_ms = int(1000 * time.time())
                 self.gesture_recognizer.recognize_async(mp_image, frame_timestamp_ms)
 
-class HandTrackingWidget(QWidget):
-    def __init__(self, parent=None):
+
+
+class GestureWidget(QWidget):
+    def __init__(self, parent=None, cam=None):
         super().__init__(parent)
+        self.cam = cam
         self.screen_geometry = QGuiApplication.primaryScreen().geometry()
         #print("handtrack widget size", self.screen_geometry.width(), self.screen_geometry.height())
         self.video_label = QLabel(self)
@@ -109,48 +117,6 @@ class HandTrackingWidget(QWidget):
 
 
     def start_video(self):
-        self.thread = Thread(self.size(), self.gesture_recognizer)
-        self.thread.changePixmap.connect(self.setImage)
-        self.thread.start()
-
-
-
-class ClickableLabel(QLabel):
-    def __init__(self, index, text, parent=None):
-        super().__init__(text, parent)
-        self.index = index
-        self.opacity_effect = QGraphicsOpacityEffect(self)
-        self.opacity_effect.setOpacity(0.5)  # 50% opacity
-        self.setGraphicsEffect(self.opacity_effect)
-        
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            print(f'Label {self.index} clicked')
-
-
-
-class AppLabels(QWidget):
-    def __init__(self, parent=None):
-        super(AppLabels, self).__init__(parent)
-
-        self.vlayout = QVBoxLayout(self)
-        self.vlayout.addStretch()
-
-        for i in range(2):  # For example, create 3 labels
-            #label = QLabel(f'Label {i+1}', self)
-            label = ClickableLabel(i+1, f'Label {i+1}', self)
-            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            label.setStyleSheet('background: black; color: white; font-size: 20px; border-radius: 1.5em;')
-            label.setFixedSize(250, 250)
-
-            self.vlayout.addWidget(label)
-            print(label.size().width(), label.size().height())
-
-        self.vlayout.addStretch()
-        # create a horizontal layout and add stretch so everything is 
-        # pushed to the right
-
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
-    
-        self.resize(self.sizeHint())
+        self.gesture_thread = GestureThread(self.size(), self.gesture_recognizer, self.cam)
+        self.gesture_thread.changePixmap.connect(self.setImage)
+        self.gesture_thread.start()

@@ -6,6 +6,10 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
+from mind.quiz.emotion import EmotionWindow
+from mind.quiz.pattern import FindPatterns
+from mind.quiz.object import ObjectWidget
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -16,17 +20,25 @@ class MainWindow(QMainWindow):
         self.setStyleSheet("background-color: black;")  # Set background color to black
         
         self.handTrackWidget = GestureWidget(self, self.cam)
+        self.objectDetectionWidget = ObjectWidget(self.cam)
+        self.pattenWidget = FindPatterns()
+        
+        level = 1
+        self.pattenWidget.make_random_board(level)
         
         # Create a stacked layout and add the widgets
         self.layout = QStackedLayout()
         self.layout.addWidget(self.handTrackWidget)
+        
+        #self.layout.addWidget(self.objectDetectionWidget)
+        self.layout.addWidget(self.pattenWidget)
 
         central_widget = QWidget(self)
         central_widget.setLayout(self.layout)
         self.setCentralWidget(central_widget)
 
         #self.layout.setCurrentWidget(self.appLabel)
-        self.addAppLabelWidget()
+        # self.addAppLabelWidget()
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
         
 

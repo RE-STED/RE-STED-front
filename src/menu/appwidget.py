@@ -16,7 +16,7 @@ class HoverButton(QPushButton):
         # Create a QGraphicsOpacityEffect object
         self.opacity_effect = QGraphicsOpacityEffect(self)
         # Set the opacity level. The value should be between 0 (completely transparent) and 1 (completely opaque).
-        self.opacity_effect.setOpacity(0.2)
+        self.opacity_effect.setOpacity(0.7)
         # Apply the opacity effect to the button
         self.setGraphicsEffect(self.opacity_effect)
 

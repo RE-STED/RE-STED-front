@@ -13,3 +13,6 @@ class Cam():
             # flip
             img = cv2.flip(img, 1)
             return img
+        else:
+            
+            exit()

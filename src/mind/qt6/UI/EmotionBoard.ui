@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StackedWidget</class>
+ <widget class="QStackedWidget" name="StackedWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>StackedWidget</string>
+  </property>
+  <widget class="QWidget" name="page1">
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>160</y>
+      <width>501</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:36pt;&quot;&gt;원하는 사람을 선택하세요!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SelectFamily">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>260</y>
+      <width>191</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>가족</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SelectCeleb">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>260</y>
+      <width>191</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>연예인</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="page2">
+   <widget class="QLabel" name="Title">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>30</y>
+      <width>501</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:36pt;&quot;&gt;선택된 인물은??&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="name">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>390</y>
+      <width>201</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:36pt;&quot;&gt;{}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::RichText</enum>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ImgForGroup">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>110</y>
+      <width>381</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ImgForOne">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>100</y>
+      <width>271</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="Group">
+   <widget class="QPushButton" name="AngryBtn_2">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>340</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>화남</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="FearfulBtn_2">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>340</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>두려움</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="NeutralBth_2">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>460</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>무표정</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SurpriseBtn_2">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>460</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>놀람</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="HappyBtn_2">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>340</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>행복함</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SadBtn_2">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>460</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>슬픔</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="InputAnswer">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>160</y>
+      <width>113</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>정답 확인</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="People">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>30</y>
+      <width>391</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="Origin_person">
+   <widget class="QPushButton" name="AngryBtn">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>350</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>화남</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="FearfulBtn">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>350</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>두려움</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="HappyBtn">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>350</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>행복함</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="NeutralBth">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>470</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>무표정</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SurpriseBtn">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>470</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>놀람</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SadBtn">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>470</y>
+      <width>171</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>슬픔</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Person">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>40</y>
+      <width>261</width>
+      <height>271</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

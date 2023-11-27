@@ -1,0 +1,38 @@
+Gallery/
+        celeb/
+                group/
+                        그룹1/
+                            1.jpg
+                            2.png
+                            ...
+                        그룹2/
+                            1.jpg
+                            2.png
+                            ...
+                        ...
+                solo/
+                        인물1/
+                            1.jpg
+                            2.png
+                            ...
+                        인물2/
+                            1.jpg
+                            2.png
+                            ...
+                        ...
+        
+        family/
+                엄마/
+                        1.jpg
+                        2.png
+                        ...
+                아빠/
+                        1.jpg
+                        2.png
+                        ...
+                삼촌/
+                        1.jpg
+                        2.png
+                        ...
+                ...
+                

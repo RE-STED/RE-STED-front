@@ -6,6 +6,8 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
+from body.body import PoseGUI
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -26,9 +28,11 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
 
         #self.layout.setCurrentWidget(self.appLabel)
-        self.addAppLabelWidget()
+        #self.addAppLabelWidget()
+        self.addBodyWidget()
+
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
-        
+
 
     def getFullScreen(self):
         self.showFullScreen()
@@ -38,8 +42,13 @@ class MainWindow(QMainWindow):
         self.appLabelWidget = AppWidget(self)
         self.layout.addWidget(self.appLabelWidget.appLabelWidget)
         self.layout.setCurrentWidget(self.appLabelWidget.appLabelWidget)
-        #self.appLabelWidget.appLabelWidget.hide()
-    
+
+        
+    def addBodyWidget(self):
+        self.poseWidget = PoseGUI(self, self.cam)
+        self.layout.addWidget(self.poseWidget.background)
+        self.layout.setCurrentWidget(self.poseWidget.background)
+
 
     def showAppLabel(self, appLabel):
         if self.btn.text() == "<":

@@ -24,3 +24,9 @@ class Pose(QWidget):
             self.mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
             self.mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2),
         )
+
+# ----------------- widget -----------------
+        
+class Pygame(QWidget):
+    pass
+   

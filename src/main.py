@@ -28,7 +28,10 @@ class MainWindow(QMainWindow):
         #self.layout.setCurrentWidget(self.appLabel)
         self.addAppLabelWidget()
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
-        
+
+        # Connect the buttonClicked signal of each AppButton instance
+        self.appLabelWidget.appLabel.connectButtonClicked(self.handleButtonClicked)
+
 
     def getFullScreen(self):
         self.showFullScreen()
@@ -39,7 +42,13 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.appLabelWidget.appLabelWidget)
         self.layout.setCurrentWidget(self.appLabelWidget.appLabelWidget)
 
-
+    # AppButton이 클릭될 때 실행되는 슬롯
+    def handleButtonClicked(self, button_index):
+        if button_index == 0:
+            self.addPysicalRehabWidget()
+        elif button_index == 1:
+            self.addCognitiveRehabWidget()
+    
     # def deleteAppLabelWidget(self, label_index):
     #     print(f"Deleting AppLabelWidget triggered by Label {label_index}")
     #     self.layout.removeWidget(self.appLabelWidget.appLabelWidget)
@@ -49,6 +58,7 @@ class MainWindow(QMainWindow):
 
     def addPysicalRehabWidget(self):
         self.appLabelWidget.appLabelWidget.hide()
+        print("addPysicalRehabWidget")
         # self.physicalRehabWidget = PhysicalRehabWidget(self)
         # self.layout.addWidget(self.physicalRehabWidget)
         # self.layout.setCurrentWidget(self.physicalRehabWidget)
@@ -56,6 +66,7 @@ class MainWindow(QMainWindow):
     
     def addCognitiveRehabWidget(self):
         self.appLabelWidget.appLabelWidget.hide()
+        print("addCognitiveRehabWidget")
         # self.cognitiveRehabWidget = CognitiveRehabWidget(self)
         # self.layout.addWidget(self.cognitiveRehabWidget)
         # self.layout.setCurrentWidget(self.cognitiveRehabWidget)

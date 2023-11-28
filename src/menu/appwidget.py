@@ -53,7 +53,10 @@ class HoverButton(QPushButton):
         return super().mouseReleaseEvent(event)
 
 
+
 class AppButton(QPushButton):
+    buttonClicked = pyqtSignal(int)  # 사용자 정의 신호 생성
+
     def __init__(self, index, text, parent=None):
         super().__init__(text, parent)
         self.index = index
@@ -81,40 +84,12 @@ class AppButton(QPushButton):
             self.setGraphicsEffect(self.opacity_effect)
         return super().mousePressEvent(event)
 
+
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.opacity_effect.setOpacity(0.2)
             self.setGraphicsEffect(self.opacity_effect)
-        return super().mouseReleaseEvent(event)
-
-
-class ClickableLabel(QLabel):
-    def __init__(self, index, text, parent=None):
-        super().__init__(text, parent)
-        self.index = index
-        self.opacity_effect = QGraphicsOpacityEffect(self)
-        self.opacity_effect.setOpacity(0.4)  # 50% opacity
-        self.setGraphicsEffect(self.opacity_effect)
-
-        # Define a signal for click events
-        self.clicked = pyqtSignal(int)
-
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.opacity_effect.setOpacity(0.7)
-            self.setGraphicsEffect(self.opacity_effect)
-
-        return super().mousePressEvent(event)
-    
-
-    def mouseReleaseEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            print(f'Label {self.index} clicked')
-            self.opacity_effect.setOpacity(0.4)
-            self.setGraphicsEffect(self.opacity_effect)
-            # Emit the clicked signal with the label index
-            self.clicked.emit(self.index)
+            self.buttonClicked.emit(self.index)  # buttonClicked 신호 발생
 
         return super().mouseReleaseEvent(event)
 
@@ -127,14 +102,17 @@ class AppButtons(QWidget):
         self.vlayout = QVBoxLayout(self)
         self.vlayout.addStretch()
 
+        self.buttons = []
+
         for i in range(2):  # For example, create 3 labels
-            #label = QLabel(f'Label {i+1}', self)
-            button = AppButton(i+1, f'Label {i+1}', self)
+            if(i == 0):
+                button = AppButton(i, f'신체 재활', self)
+            elif(i == 1):
+                button = AppButton(i, f'인지 재활', self)
+            
             button.setFixedSize(250, 250)
 
-            # Connect the clicked signal to the deleteAppLabelWidget slot
-            # button.clicked.connect(parent.deleteAppLabelWidget)
-
+            self.buttons.append(button)
             self.vlayout.addWidget(button)
             print(button.size().width(), button.size().height())
 
@@ -147,7 +125,11 @@ class AppButtons(QWidget):
     
         self.resize(self.sizeHint())
 
+    def connectButtonClicked(self, handler):
+        for button in self.buttons:
+            button.buttonClicked.connect(handler)
 
+    
 
 class AppWidget(QWidget):
     def __init__(self, parent=None):

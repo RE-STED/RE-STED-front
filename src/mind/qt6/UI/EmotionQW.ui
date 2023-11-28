@@ -6,25 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1470</width>
-    <height>890</height>
+    <width>1456</width>
+    <height>891</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="video">
+  <widget class="QStackedWidget" name="stackedWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1470</width>
-     <height>890</height>
+     <x>10</x>
+     <y>10</y>
+     <width>1441</width>
+     <height>871</height>
     </rect>
    </property>
-   <property name="text">
-    <string/>
-   </property>
+   <widget class="QWidget" name="page"/>
+   <widget class="QWidget" name="page_2"/>
   </widget>
  </widget>
  <resources/>

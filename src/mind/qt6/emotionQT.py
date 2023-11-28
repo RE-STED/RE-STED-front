@@ -2,7 +2,7 @@ import sys
 from PyQt6.QtWidgets import *
 from PyQt6 import uic
 import time
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt, QPropertyAnimation
 
 class EmotionBoard(QStackedWidget):
     def __init__(self):
@@ -15,6 +15,8 @@ class EmotionBoard(QStackedWidget):
         self.widget(2).findChild(QPushButton, "FearfulBtn_2").setFlat(False)
         self.widget(2).findChild(QPushButton, "SurpriseBtn_2").setFlat(False)
         self.widget(2).findChild(QPushButton, "NeutralBth_2").setFlat(False)
+    
+        
 
         
 
@@ -33,11 +35,3 @@ class EmotionBoard(QStackedWidget):
         
 #     def end(self):
 #         self.stack.setCurrentIndex(0)
-
-        
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    StartWindow = EmotionWindow()
-    StartWindow.show()
-
-    app.exec()

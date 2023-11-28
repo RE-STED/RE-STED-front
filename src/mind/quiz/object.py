@@ -9,7 +9,7 @@ from mediapipe.tasks.python import vision
 
 from PyQt6.QtWidgets import *
 from PyQt6 import uic
-from PyQt6.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal, Qt
 from PyQt6.QtGui import QImage, QPixmap
 
 from ..qt6.detectionQT import DetectionWidget
@@ -26,7 +26,7 @@ FONT_THICKNESS = 1
 TEXT_COLOR = (255, 0, 0)  # red
 
 
-label_size = [1471, 891]
+label_size = [1470, 890]
 label_ratio = label_size[0] / label_size[1]
 
 class Detection:
@@ -93,7 +93,7 @@ class Detection:
     
     image_copy = np.copy(image_mp.numpy_view())
     annotated_image = self.visualize(image_copy, detection_result)
-    cv2.imwrite(image_name, annotated_image)
+    #cv2.imwrite(image_name, annotated_image)
 
     
     return detection_result.detections
@@ -129,7 +129,7 @@ class ObjectQuiz(QThread):
                      'left_bottom': (50, self.height - 50),
                      'center': (int(self.width / 2), int(self.height / 2))}
     self.font_scale = 1.5
-    self.font_face = cv2.FONT_HERSHEY_SIMPLEX
+    self.font_face = cv2.FONT_HERSHEY_DUPLEX
 
     # Detector
     self.model = Detection()
@@ -214,34 +214,34 @@ class ObjectQuiz(QThread):
   def get_frame(self):
     frame = self.Cam.capture()
     
-    original_width = frame.shape[1]
-    original_height = frame.shape[0]
-    origin_ratio = frame.shape[1] / frame.shape[0]
+    # original_width = frame.shape[1]
+    # original_height = frame.shape[0]
+    # origin_ratio = frame.shape[1] / frame.shape[0]
     
-    # 원본 프레임과 레이블의 비율을 비교하여 크롭할 부분의 크기 결정
-    if origin_ratio > label_ratio:
-      new_width = int(original_height * label_ratio)
-      new_height = original_height
-    else:
-      new_width = original_width
-      new_height = int(original_width / label_ratio)
+    # # 원본 프레임과 레이블의 비율을 비교하여 크롭할 부분의 크기 결정
+    # if origin_ratio > label_ratio:
+    #   new_width = int(original_height * label_ratio)
+    #   new_height = original_height
+    # else:
+    #   new_width = original_width
+    #   new_height = int(original_width / label_ratio)
 
-    # 크롭할 부분의 중심이 원본 프레임의 중심이 되도록 크롭
-    crop_x = (original_width - new_width) // 2
-    crop_y = (original_height - new_height) // 2
+    # # 크롭할 부분의 중심이 원본 프레임의 중심이 되도록 크롭
+    # crop_x = (original_width - new_width) // 2
+    # crop_y = (original_height - new_height) // 2
     
-    frame = frame[crop_y : crop_y + new_height, crop_x : crop_x + new_width, :]
+    # #frame = frame[crop_y : crop_y + new_height, crop_x : crop_x + new_width, :]
 
-    # 크롭한 프레임을 레이블의 크기로 리사이즈
-    frame = cv2.resize(frame, label_size)
-    self.width = frame.shape[1]
-    self.height = frame.shape[0]
+    # # 크롭한 프레임을 레이블의 크기로 리사이즈
+    # frame = cv2.resize(frame, label_size)
+    # self.width = frame.shape[1]
+    # self.height = frame.shape[0]
     
-    self.position = {'right_top': (self.width - 200, 50),
-                  'right_bottom': (self.width - 200, self.height - 50),
-                  'left_top': (50, 50),
-                  'left_bottom': (50, self.height - 50),
-                  'center': (int(self.width / 2), int(self.height / 2))}
+    # self.position = {'right_top': (self.width - 200, 50),
+    #               'right_bottom': (self.width - 200, self.height - 50),
+    #               'left_top': (50, 50),
+    #               'left_bottom': (50, self.height - 50),
+    #               'center': (int(self.width / 2), int(self.height / 2))}
     
     return frame
 
@@ -259,9 +259,12 @@ class ObjectQuiz(QThread):
 
   # 영상에 글자를 쓰는 함수
   def draw_text(self, frame, text, position, font_scale=1.0, color=(0, 0, 0), thickness=1):
+    
+    pos_x, pos_y = position[0] - len(text) * 15, position[1]
+    
     return cv2.putText(img=frame,
                         text=text,
-                        org=position,
+                        org=(pos_x, pos_y),
                         fontFace=self.font_face,
                         fontScale=font_scale,
                         color=color,
@@ -375,11 +378,15 @@ class ObjectWidget(DetectionWidget):
         super().__init__()
         
         self.setStyleSheet("background-image: url(src/mind/qt6/img/bgi.jpeg);")
+        
+        self.video_size = self.video.size()
 
         self.captureThread = ObjectQuiz(cam)
         self.captureThread.frameCaptured.connect(self.update_frame)
         self.captureThread.start()
 
     def update_frame(self, image):
-        # Convert the QImage to QPixmap and show it on the QLabel
-        self.video.setPixmap(QPixmap.fromImage(image))
+        # Convert the QImage to QPixmap and show it on the QLabel\
+          
+        pixmap = QPixmap.fromImage(image).scaled(self.video_size, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
+        self.video.setPixmap(pixmap)

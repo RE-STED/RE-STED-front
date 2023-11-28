@@ -1,12 +1,13 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton
+from PyQt6.QtWidgets import QApplication, QMainWindow, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton, QVBoxLayout
 from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve
 
 from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
-from mind.quiz.emotion import EmotionWindow
+from mind.qt6.emotionQT import EmotionBoard
+from mind.quiz.emotion import EmotionWidget
 from mind.quiz.pattern import FindPatterns
 from mind.quiz.object import ObjectWidget
 
@@ -22,6 +23,8 @@ class MainWindow(QMainWindow):
         self.handTrackWidget = GestureWidget(self, self.cam)
         self.objectDetectionWidget = ObjectWidget(self.cam)
         self.pattenWidget = FindPatterns()
+        self.emoWidget = EmotionWidget()
+        
         
         level = 1
         self.pattenWidget.make_random_board(level)
@@ -29,9 +32,9 @@ class MainWindow(QMainWindow):
         # Create a stacked layout and add the widgets
         self.layout = QStackedLayout()
         self.layout.addWidget(self.handTrackWidget)
-        
-        #self.layout.addWidget(self.objectDetectionWidget)
-        self.layout.addWidget(self.pattenWidget)
+        #self.layout.addWidget(self.objectDetectionWidget) #    -> Done
+        #self.layout.addWidget(self.pattenWidget) #             -> Perfect
+        #self.layout.addWidget(self.emoWidget) #                -> Perfect
 
         central_widget = QWidget(self)
         central_widget.setLayout(self.layout)

@@ -15,14 +15,25 @@ from ..utils.util import random_choice
 from ..utils.GAN.StarGAN import *
 from ..qt6.emotionQT import EmotionBoard
 
-class EmotionWindow(QMainWindow):
-    def __init__(self) -> None:
+EmotionQW = uic.loadUiType("src/mind/qt6/UI/EmotionQW.ui")[0]
+
+class EmotionWidget(QWidget, EmotionQW):
+    def __init__(self):
         super().__init__()
-        
         # PyQt6
-        self.resize(800, 600)
+        
+        # QWidget의 배경 없애기
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        
+        # Qwidget 크기 조정
+        self.resize(1920, 1080)
+
         self.stack = EmotionBoard()
-        self.setCentralWidget(self.stack)
+        
+        layout = QVBoxLayout()
+        layout.addWidget(self.stack)
+        self.setLayout(layout)
+        
         self.stack.widget(0).findChild(QPushButton, "SelectCeleb").clicked.connect(self.Start)
         self.stack.widget(0).findChild(QPushButton, "SelectFamily").clicked.connect(self.Start)
         
@@ -45,10 +56,12 @@ class EmotionWindow(QMainWindow):
         
         self.model = StarGAN
         
-        self.Gallery = "Gallery"
+        self.Gallery = "src/mind/Gallery"
         
         self.label = ['angry', 'fearful', 'happy', 'neutral', 'sad', 'surprised']
         self.answer = None
+        
+        self.stack.setCurrentIndex(0)
         
     def Start(self):
         category = 1 if self.sender().text() == '가족' else 2

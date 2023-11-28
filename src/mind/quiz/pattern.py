@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 from ..qt6.patternQT import PatternWindow
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton, QSizePolicy
 
 
 class FindPatterns(PatternWindow):
@@ -18,7 +18,13 @@ class FindPatterns(PatternWindow):
         self.opacity_effect.setOpacity(0.8)
         # Apply the opacity effect to the button
         self.setGraphicsEffect(self.opacity_effect)
-        self.AnswerBtn.clicked.connect(self.game)
+        
+        self.Answer0.clicked.connect(self.game); self.Answer1.clicked.connect(self.game); self.Answer2.clicked.connect(self.game)
+        self.Answer3.clicked.connect(self.game); self.Answer4.clicked.connect(self.game); self.Answer5.clicked.connect(self.game)
+        self.Answer6.clicked.connect(self.game); self.Answer7.clicked.connect(self.game); self.Answer8.clicked.connect(self.game); self.Answer9.clicked.connect(self.game)
+        
+        self.set_style(self.Answer0); self.set_style(self.Answer1); self.set_style(self.Answer2); self.set_style(self.Answer3); self.set_style(self.Answer4)
+        self.set_style(self.Answer5); self.set_style(self.Answer6); self.set_style(self.Answer7); self.set_style(self.Answer8); self.set_style(self.Answer9)
         
         # Game Setting
         self.size = 9
@@ -31,6 +37,9 @@ class FindPatterns(PatternWindow):
         self.lon = {1 : [0, 7, 8], 2:[1, 4, 6, 9], 3:[2, 3, 5]}
         
         self.target_tile = random.choice(list(self.tile.keys()))
+        
+        # QusetionText의 글자 크기를 조절하려면
+        self.QuestionText.setStyleSheet("font-size: 40pt;")
         self.QuestionText.setText(f"{self.tile[self.target_tile]}를 모두 클릭하고 숨겨진 숫자를 찾아보세요.")
         
         self.cor_answer = set([])
@@ -55,8 +64,8 @@ class FindPatterns(PatternWindow):
         self.make_qt_board()
 
     def game(self):
-
-        num_answer = self.AnswerBox.value()
+        btn = self.sender()
+        num_answer = int(btn.text())
         return self.check_answer(num_answer)
         
         
@@ -66,8 +75,13 @@ class FindPatterns(PatternWindow):
         y, x, _, _ = self.GameBoard.getItemPosition(index)
         if btn.isFlat():
             self.cor_answer.discard((y, x))
+            btn.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; } QPushButton:hover { font-weight: bold; }");
+
+
         else:
             self.cor_answer.add((y, x))
+            btn.setStyleSheet("QPushButton { background-color: black; font-size: 30pt; color: white; } QPushButton:hover { font-weight: bold; }")
+
 
         
     def add_board(self, i, j, tile_name):
@@ -254,6 +268,7 @@ class FindPatterns(PatternWindow):
             for j in range(self.size):
                 button = self.GameBoard.itemAtPosition(i, j).widget()
                 button.setFixedSize(70, 70)
-                button.setStyleSheet('font-size: 30pt')
+                #button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+                button.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; } QPushButton:hover { font-weight: bold; }");
                 button.setText(self.board[i][j])
                 button.clicked.connect(self.add_cordinate)

@@ -37,6 +37,10 @@ class PatternWindow(QWidget, Board):
         else:
             QMessageBox.about(self, "오답", "[빠진 문자]가 있는지 \n또는\n [숨겨진 숫자]를 확인해주세요!")
             
+    def set_style(self, btn):
+        btn.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; } QPushButton:hover { font-weight: bold; font-size: 33pt;}");
+            
+            
         
 
 if __name__ == "__main__":

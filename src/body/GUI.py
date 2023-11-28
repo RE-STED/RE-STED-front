@@ -11,7 +11,8 @@ import mediapipe as mp
 import numpy as np
 
 # from widget import Pose
-from body.thread import Thread1
+# from body.thread import Thread1
+from thread import Thread1
 
 # thread2 for cam
   

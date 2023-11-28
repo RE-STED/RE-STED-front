@@ -1,71 +1,89 @@
 import sys
 import os
 import time
-import cv2
 
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 
-from thread import Thread1
+import cv2
+import mediapipe as mp
 import numpy as np
 
+# from widget import Pose
+from thread import Thread1
 
+# thread2 for cam
+class Cam():
+    def __init__(self):
+        super().__init__()
+        self.cam = cv2.VideoCapture(0)
+        
+    def capture(self):
+        ret, frame = self.cam.read()
+        if ret:
+            # color change
+            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # flip
+            img = cv2.flip(img, 1)
+            return img         
 # ----------------- GUI -----------------
-# gui 1 for pose
+
 class PoseGUI(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, parents=None, cam=None):
+        super().__init__()
+        # cam
+        self.background = QLabel(self)
+        self.Cam = cam
 
-        self.background = QWidget(self)
+        # thread
+        self.thread1 = Thread1(self.Cam)
+        # self.thread1 = Thread2()
 
-        # self.cam = cam # cam
-
-        self.startButton = QPushButton('Start Pose Estimation') # botton
+        # button
+        self.startButton = QPushButton('Start Pose Estimation')
         self.startButton.clicked.connect(self.toggle_capture)
         self.is_capturing = False
 
-        self.scene1 = QGraphicsScene(self) # pose
+        # pose screen
+        self.scene1 = QGraphicsScene(self)
         self.view1 = QGraphicsView(self.scene1)
         self.image_pose = QGraphicsPixmapItem()
         self.scene1.addItem(self.image_pose)
 
-        self.scene2 = QGraphicsScene(self) # game
+        # game screen
+        self.scene2 = QGraphicsScene(self)
         self.view2 = QGraphicsView(self.scene2)
         self.image_game = QGraphicsPixmapItem()
         # self.scene2.addItem(self.image_game)
 
+        # horizion layout
         self.hlayout = QHBoxLayout()
         self.hlayout.addWidget(self.view1)
         self.hlayout.addWidget(self.view2)
 
-        vlayout = QVBoxLayout()
+        # verteical layout
+        vlayout = QVBoxLayout(self.background)
         vlayout.addLayout(self.hlayout)
         vlayout.addWidget(self.startButton)
 
         self.background.setLayout(vlayout)
 
-        self.opacity_effect = QGraphicsOpacityEffect(self)
-        self.opacity_effect.setOpacity(0.5)  # 50% opacity
-        self.background.setGraphicsEffect(self.opacity_effect)
-
-    def setPose(self, image, height, width):
+          # 원하는 업데이트 간격을 밀리초 단위로 설정
+    def set_thread1(self, image, height, width):
         self.image_pose.setPixmap(QPixmap.fromImage(image))
-        # self.image_height = height
-        # self.image_width = width
 
-    # def setGame(self, image, height, width):
-    #     self.image_game.setPixmap(QPixmap.fromImage(image))
-
-    def start_pose(self):
-        self.thread1 = Thread1()
-        self.thread1.updateImg.connect(self.setPose)
+    def start_thread1(self):
+        self.thread1 = Thread1(self.Cam)
         self.thread1.start()
+        self.thread1.updateImg.connect(self.set_thread1)
 
-    # def start_game(self):
-    #     self.thread1 = Thread1(self.img)
-    #     self.thread1.updateImg.connect(self.setPose)
-    #     self.thread1.start()
+    # def set_thread2(self, image, height, width):
+    #     self.image_game.setPixmap(QPixmap.fromImage(image))
+    
+    # def start_thread2(self):
+    #     self.thread2.start()
+    #     self.thread2.updateImg.connect(self.set_thread2)
         
     def toggle_capture(self):
         if self.is_capturing: # stop
@@ -74,23 +92,26 @@ class PoseGUI(QWidget):
             self.startButton.setText('Start Pose Estimation')
         else: # start
             self.is_capturing = True
-            self.start_pose()
+            self.start_thread1()
             self.thread1.on()
             self.startButton.setText('Stop Pose Estimation')
-    
+
+
+# gui2 for pygame
+# gui3 for botton
 
 if __name__ == '__main__':
+    # main window
     class MyApp(QMainWindow):
         def __init__(self):
             super().__init__()
             self.setWindowTitle('RESTED-AI-BODY')
             self.resize(1920, 1080)
-            # self.cam = Cam()
-            self.PoseGui = PoseGUI()
+            self.Cam = Cam()
+            self.PoseGui = PoseGUI(self, self.Cam)
             self.setCentralWidget(self.PoseGui.background) # set
-
+            
     app = QApplication(sys.argv)
     window = MyApp()
     window.show()
     app.exec()
-

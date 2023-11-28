@@ -2,37 +2,27 @@ from PyQt6.QtCore import QThread, pyqtSignal, Qt
 from PyQt6.QtGui import QImage
 from PyQt6.QtWidgets import QApplication
 
-import time
 import cv2
 from widget import Pose
-import numpy as np
 
-# import main3
-
-
+# ----------------- thread -----------------
+# thread1 for pose estimation
 class Thread1(QThread):
     updateImg = pyqtSignal(QImage, int, int)
-    def __init__(self):
+    def __init__(self, cam):
         super().__init__()
         self.running = True
-        self.cam = cv2.VideoCapture(0)
+        self.Cam = cam
         self.Pose = Pose()
-    
-    def capture(self):
-        ret, frame = self.cam.read()
-        if ret:
-            # color change
-            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            # flip
-            img = cv2.flip(img, 1)
-            return img
 
     def run(self):
+        # cam = Cam()
         while self.running:
-            img = self.capture()
+            img = self.Cam.capture()
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img.flags.writeable = True
             img, landmarks = self.Pose.pose_detect(img)
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            self.img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             h, w, ch = img.shape
             bytesPerLine = ch * w
             

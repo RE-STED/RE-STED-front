@@ -11,7 +11,7 @@ class Pose(QWidget):
 
     def pose_detect(self, img):
         results = self.pose.process(img)
-        landmarks = results.pose_landmarks.landmark
+        landmarks = results.pose_landmarks
         self.draw_landmarks(img, results)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         return img, landmarks

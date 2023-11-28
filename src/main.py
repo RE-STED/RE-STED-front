@@ -6,7 +6,8 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
-from body.body import PoseGUI
+from body.main3 import PoseGUI
+# from body.main2 import PoseGUI
 
 
 class MainWindow(QMainWindow):
@@ -45,7 +46,7 @@ class MainWindow(QMainWindow):
 
         
     def addBodyWidget(self):
-        self.poseWidget = PoseGUI(self, self.cam)
+        self.poseWidget = PoseGUI(self, self.cam.capture())
         self.layout.addWidget(self.poseWidget.background)
         self.layout.setCurrentWidget(self.poseWidget.background)
 

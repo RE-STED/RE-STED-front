@@ -5,19 +5,31 @@ from PyQt6.QtWidgets import QApplication
 import time
 import cv2
 from widget import Pose
+import numpy as np
+
+# import main3
 
 
 class Thread1(QThread):
     updateImg = pyqtSignal(QImage, int, int)
-    def __init__(self, cam):
+    def __init__(self):
         super().__init__()
         self.running = True
-        self.Cam = cam
+        self.cam = cv2.VideoCapture(0)
         self.Pose = Pose()
+    
+    def capture(self):
+        ret, frame = self.cam.read()
+        if ret:
+            # color change
+            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # flip
+            img = cv2.flip(img, 1)
+            return img
 
     def run(self):
         while self.running:
-            img = self.Cam.capture()
+            img = self.capture()
             img.flags.writeable = True
             img, landmarks = self.Pose.pose_detect(img)
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)

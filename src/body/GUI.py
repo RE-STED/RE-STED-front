@@ -11,22 +11,10 @@ import mediapipe as mp
 import numpy as np
 
 # from widget import Pose
-from thread import Thread1
+from body.thread import Thread1
 
 # thread2 for cam
-class Cam():
-    def __init__(self):
-        super().__init__()
-        self.cam = cv2.VideoCapture(0)
-        
-    def capture(self):
-        ret, frame = self.cam.read()
-        if ret:
-            # color change
-            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            # flip
-            img = cv2.flip(img, 1)
-            return img         
+  
 # ----------------- GUI -----------------
 
 class PoseGUI(QWidget):
@@ -101,13 +89,26 @@ class PoseGUI(QWidget):
 # gui3 for botton
 
 if __name__ == '__main__':
+    class Cami():
+        def __init__(self):
+            super().__init__()
+            self.cam = cv2.VideoCapture(0)
+            
+        def capture(self):
+            ret, frame = self.cam.read()
+            if ret:
+                # color change
+                img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                # flip
+                img = cv2.flip(img, 1)
+                return img       
     # main window
     class MyApp(QMainWindow):
         def __init__(self):
             super().__init__()
             self.setWindowTitle('RESTED-AI-BODY')
             self.resize(1920, 1080)
-            self.Cam = Cam()
+            self.Cam = Cami()
             self.PoseGui = PoseGUI(self, self.Cam)
             self.setCentralWidget(self.PoseGui.background) # set
             

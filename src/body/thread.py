@@ -3,7 +3,7 @@ from PyQt6.QtGui import QImage
 from PyQt6.QtWidgets import QApplication
 
 import cv2
-from widget import Pose
+from body.widget import Pose
 
 # ----------------- thread -----------------
 # thread1 for pose estimation

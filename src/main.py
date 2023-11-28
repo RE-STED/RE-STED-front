@@ -6,6 +6,9 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
+from body.gui import PoseGUI
+# from body.main2 import PoseGUI
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -26,11 +29,14 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
 
         #self.layout.setCurrentWidget(self.appLabel)
-        self.addAppLabelWidget()
+        #self.addAppLabelWidget()
+        self.addBodyWidget()
+
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
 
         # Connect the buttonClicked signal of each AppButton instance
         self.appLabelWidget.appLabel.connectButtonClicked(self.handleButtonClicked)
+
 
 
     def getFullScreen(self):
@@ -41,6 +47,7 @@ class MainWindow(QMainWindow):
         self.appLabelWidget = AppWidget(self)
         self.layout.addWidget(self.appLabelWidget.appLabelWidget)
         self.layout.setCurrentWidget(self.appLabelWidget.appLabelWidget)
+
 
     # AppButton이 클릭될 때 실행되는 슬롯
     def handleButtonClicked(self, button_index):
@@ -54,6 +61,13 @@ class MainWindow(QMainWindow):
     #     self.layout.removeWidget(self.appLabelWidget.appLabelWidget)
     #     self.appLabelWidget.appLabelWidget.deleteLater()
     #     self.appLabelWidget.deleteLater()
+
+        
+    # def addBodyWidget(self):
+    #     self.poseWidget = PoseGUI(self, self.cam)
+    #     self.layout.addWidget(self.poseWidget.background)
+    #     self.layout.setCurrentWidget(self.poseWidget.background)
+
 
 
     def addPysicalRehabWidget(self):

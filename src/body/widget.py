@@ -2,6 +2,8 @@ from PyQt6.QtWidgets import QWidget
 import cv2
 import mediapipe as mp
 
+# ----------------- widget -----------------
+
 class Pose(QWidget):
     def __init__(self):
         super().__init__()
@@ -11,10 +13,11 @@ class Pose(QWidget):
 
     def pose_detect(self, img):
         results = self.pose.process(img)
-        landmarks = results.pose_landmarks.landmark
+        pose_landmarks = results.pose_landmarks
+        # print(landmarks)
         self.draw_landmarks(img, results)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-        return img, landmarks
+        return img, pose_landmarks
 
     def draw_landmarks(self, img, results):
         self.mp_drawing.draw_landmarks(
@@ -24,3 +27,9 @@ class Pose(QWidget):
             self.mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
             self.mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2),
         )
+
+
+        
+class Pygame(QWidget):
+    pass
+   

@@ -38,17 +38,27 @@ class MainWindow(QMainWindow):
         self.appLabelWidget = AppWidget(self)
         self.layout.addWidget(self.appLabelWidget.appLabelWidget)
         self.layout.setCurrentWidget(self.appLabelWidget.appLabelWidget)
-        #self.appLabelWidget.appLabelWidget.hide()
+
+
+    # def deleteAppLabelWidget(self, label_index):
+    #     print(f"Deleting AppLabelWidget triggered by Label {label_index}")
+    #     self.layout.removeWidget(self.appLabelWidget.appLabelWidget)
+    #     self.appLabelWidget.appLabelWidget.deleteLater()
+    #     self.appLabelWidget.deleteLater()
+
+
+    def addPysicalRehabWidget(self):
+        self.appLabelWidget.appLabelWidget.hide()
+        # self.physicalRehabWidget = PhysicalRehabWidget(self)
+        # self.layout.addWidget(self.physicalRehabWidget)
+        # self.layout.setCurrentWidget(self.physicalRehabWidget)
     
-
-    def showAppLabel(self, appLabel):
-        if self.btn.text() == "<":
-            self.btn.setText(">")
-            appLabel.show()
-        else:
-            self.btn.setText("<")
-            appLabel.hide()
-
+    
+    def addCognitiveRehabWidget(self):
+        self.appLabelWidget.appLabelWidget.hide()
+        # self.cognitiveRehabWidget = CognitiveRehabWidget(self)
+        # self.layout.addWidget(self.cognitiveRehabWidget)
+        # self.layout.setCurrentWidget(self.cognitiveRehabWidget)
 
 
 if __name__ == '__main__':

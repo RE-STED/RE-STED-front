@@ -3,7 +3,7 @@ sys.path.append('src')
 
 from cam import Cam
 
-from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QGraphicsOpacityEffect
+from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication
 from PyQt6.QtCore import QThread, Qt, pyqtSignal
 import mediapipe as mp

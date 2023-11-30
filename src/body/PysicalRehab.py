@@ -13,6 +13,7 @@ from thread import Thread1
 # ----------------- GUI -----------------
 
 class PoseGUI(QWidget):
+
     def __init__(self, parents=None, cam=None):
         super().__init__()
         # cam
@@ -29,21 +30,21 @@ class PoseGUI(QWidget):
         self.is_capturing = False
 
         # pose screen
-        self.scene1 = QGraphicsScene(self)
-        self.view1 = QGraphicsView(self.scene1)
-        self.image_pose = QGraphicsPixmapItem()
-        self.scene1.addItem(self.image_pose)
+        # self.scene1 = QGraphicsScene(self)
+        # self.view1 = QGraphicsView(self.scene1)
+        self.image_pose = QLabel(self)
+        #self.scene1.addWidget(self.image_pose)
 
         # game screen
-        self.scene2 = QGraphicsScene(self)
-        self.view2 = QGraphicsView(self.scene2)
-        self.image_game = QGraphicsPixmapItem()
+        # self.scene2 = QGraphicsScene(self)
+        # self.view2 = QGraphicsView(self.scene2)
+        self.image_game = QLabel(self)
         # self.scene2.addItem(self.image_game)
 
         # horizion layout
         self.hlayout = QHBoxLayout()
-        self.hlayout.addWidget(self.view1)
-        self.hlayout.addWidget(self.view2)
+        self.hlayout.addWidget(self.image_pose)
+        self.hlayout.addWidget(self.image_game)
 
         # verteical layout
         vlayout = QVBoxLayout(self.background)
@@ -84,6 +85,7 @@ class PoseGUI(QWidget):
 # gui3 for botton
 
 if __name__ == '__main__':
+    
     class Cami():
         def __init__(self):
             super().__init__()

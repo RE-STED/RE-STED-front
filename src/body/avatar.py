@@ -36,10 +36,13 @@ class Avatar(QWidget):
 }
         
     def drawimg(self, save=False):
-        img = np.zeros([self.height,self.width, 3])+255
+        img = np.zeros((self.height, self.width, 3), np.uint8) + 255 #배경 흰색
         for parts in self.connect_point:
             for i in range(len(parts)-1):
                 p = self.info_dict[parts[i]]
                 q = self.info_dict[parts[i+1]]
-                cv2.line(img, (int(pm.joint_pos_dict[p].x * self.width), int(pm.joint_pos_dict[p].y * self.height)), (int(pm.joint_pos_dict[q].x * self.width), int(pm.joint_pos_dict[q].y * self.height)), (245, 66, 230), 5)
+                cv2.line(img, (int(pm.joint_pos_dict[p].x * self.width), 
+                               int(pm.joint_pos_dict[p].y * self.height)), 
+                               (int(pm.joint_pos_dict[q].x * self.width), 
+                                int(pm.joint_pos_dict[q].y * self.height)), (245, 66, 230), 5)
         return img

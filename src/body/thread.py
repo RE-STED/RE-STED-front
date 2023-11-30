@@ -14,12 +14,14 @@ import function as fn
 # thread1 for pose estimation
 class Thread1(QThread):
     updateImg = pyqtSignal(QImage, int, int)
+
     def __init__(self, cam):
         super().__init__()
         self.running = True
         self.Cam = cam
         self.Pose = Pose()
         self.Avatar = Avatar(1920, 1080)
+
 
     def run(self):
         # cam = Cam()
@@ -62,7 +64,6 @@ class Thread1(QThread):
                 # draw avatar
                 img = self.Avatar.drawimg()
                 img = img.reshape(self.Avatar.height, self.Avatar.width, -1)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 print("avatar:", img.shape)
             except:
                 print('no pose')
@@ -84,6 +85,8 @@ class Thread1(QThread):
 
     def off(self):
         self.running = False
+
+
 
 # thread2 for pygame
 class Thread2(QThread):

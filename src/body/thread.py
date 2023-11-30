@@ -14,12 +14,12 @@ import function as fn
 # thread1 for pose estimation
 class Thread1(QThread):
     updateImg = pyqtSignal(QImage, int, int)
-    def __init__(self, cam):
+    def __init__(self, cam, parant=None):
         super().__init__()
         self.running = True
         self.Cam = cam
         self.Pose = Pose()
-        self.Avatar = Avatar(960, 1080)
+        self.Avatar = Avatar(1920, 1080, parant=self)
 
     def run(self):
         # cam = Cam()
@@ -44,28 +44,14 @@ class Thread1(QThread):
                     pm.saveAngle[joint[1]].append(pm.joint_pos_dict[joint[1]].angle)
                 print('----------------------------------------------')
 
-                img = cv2.flip(img, 1)
-
-                # put angle text in image
-                cv2.putText(
-                    img,
-                    str("{}: {}".format("right shoulder", pm.joint_pos_dict["RIGHT_SHOULDER"].angle)),
-                    (10, 160),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    2,
-                    (255, 255, 255),
-                    2,
-                    cv2.LINE_AA,
-                )
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                print("real:", img.shape)
-                # draw avatar
-                img = self.Avatar.drawimg()
-                img = img.reshape(self.Avatar.height, self.Avatar.width, -1)
+                img = self.Avatar.process()
                 # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                print("avatar:", img.shape)
             except:
                 print('no pose')
+                            # draw avatar
+            # img = self.Avatar.process()
+            print(img.shape)
+            img = cv2.flip(img, 1)
             h, w, ch = img.shape
             bytesPerLine = ch * w
             

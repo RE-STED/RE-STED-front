@@ -4,7 +4,7 @@ import parameter as pm
 from PyQt6.QtWidgets import QWidget
 
 class Avatar(QWidget):
-    def __init__(self, width, height):
+    def __init__(self, width, height, parant=None):
         self.width = width
         self.height = height
         self.connect_point = [
@@ -34,7 +34,13 @@ class Avatar(QWidget):
     27 : "LEFT_EAR", #left_ear
     28 : "RIGHT_EAR" #right_ear
 }
-        
+    
+    def process(self):
+        center = self.extract_center()
+        img = self.drawimg()
+        img = self.cropCenter(img, center)
+        return img
+    
     def drawimg(self, save=False):
         img = np.zeros((self.height, self.width, 3), np.uint8) + 255 #배경 흰색
         for parts in self.connect_point:
@@ -45,4 +51,21 @@ class Avatar(QWidget):
                                int(pm.joint_pos_dict[p].y * self.height)), 
                                (int(pm.joint_pos_dict[q].x * self.width), 
                                 int(pm.joint_pos_dict[q].y * self.height)), (0, 0, 0), 5)
+        return img
+
+    def extract_center(self):
+        center = np.zeros(2)
+        center += np.array([pm.joint_pos_dict['LEFT_SHOULDER'].x, pm.joint_pos_dict['LEFT_SHOULDER'].y])
+        center += np.array([pm.joint_pos_dict['RIGHT_SHOULDER'].x, pm.joint_pos_dict['RIGHT_SHOULDER'].y])
+        center /= 2
+        return center
+
+    def cropCenter(self, img, center):
+        x = int(center[0] * self.width)
+        y = int(center[1] * self.height)
+        print(x)
+
+        img = img[y - int(self.height / 4):y + int(self.height / 4),
+                  x - int(self.width / 4):x + int(self.width / 4), :]
+        # img = img[:, x - int(self.width / 4):x + int(self.width / 4), :]
         return img

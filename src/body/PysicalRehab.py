@@ -14,7 +14,7 @@ from thread import Thread1
 
 class PoseGUI(QWidget):
 
-    def __init__(self, parents=None, cam=None):
+    def __init__(self, parant=None, cam=None):
         super().__init__()
         # cam
         self.background = QLabel(self)
@@ -29,23 +29,26 @@ class PoseGUI(QWidget):
         self.startButton.clicked.connect(self.toggle_capture)
         self.is_capturing = False
 
+        self.scene1 = QGraphicsScene(self) # pose
         # pose screen
         self.scene1 = QGraphicsScene(self)
         self.view1 = QGraphicsView(self.scene1)
-        self.image_pose = QGraphicsPixmapItem(self)
-        self.scene1.addWidget(self.image_pose)
+        self.image_pose = QGraphicsPixmapItem()
+        self.scene1.addItem(self.image_pose)
 
+        self.scene2 = QGraphicsScene(self) # game
         # game screen
         self.scene2 = QGraphicsScene(self)
         self.view2 = QGraphicsView(self.scene2)
-        self.image_game = QGraphicsPixmapItem(self)
-        self.scene2.addItem(self.image_game)
+        self.image_game = QGraphicsPixmapItem()
+        # self.scene2.addItem(self.image_game)
 
         # horizion layout
         self.hlayout = QHBoxLayout()
-        self.hlayout.addWidget(self.image_pose)
-        self.hlayout.addWidget(self.image_game)
+        self.hlayout.addWidget(self.view1)
+        self.hlayout.addWidget(self.view2)
 
+        vlayout = QVBoxLayout()
         # verteical layout
         vlayout = QVBoxLayout(self.background)
         vlayout.addLayout(self.hlayout)
@@ -58,7 +61,7 @@ class PoseGUI(QWidget):
         self.image_pose.setPixmap(QPixmap.fromImage(image))
 
     def start_thread1(self):
-        self.thread1 = Thread1(self.Cam)
+        self.thread1 = Thread1(cam=self.Cam, parent=self)
         self.thread1.start()
         self.thread1.updateImg.connect(self.set_thread1)
 

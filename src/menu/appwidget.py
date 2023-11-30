@@ -5,6 +5,8 @@ from PyQt6.QtCore import QThread, Qt, pyqtSignal, QSize, QPropertyAnimation, QEa
 
 
 class HoverButton(QPushButton):
+    # Define a signal for click events
+    
     def __init__(self, text, parent=None, size=QSize(190, 190)):
         super().__init__(text, parent)
         self.defaultSize = size
@@ -16,7 +18,7 @@ class HoverButton(QPushButton):
         # Create a QGraphicsOpacityEffect object
         self.opacity_effect = QGraphicsOpacityEffect(self)
         # Set the opacity level. The value should be between 0 (completely transparent) and 1 (completely opaque).
-        self.opacity_effect.setOpacity(0.2)
+        self.opacity_effect.setOpacity(0.4)
         # Apply the opacity effect to the button
         self.setGraphicsEffect(self.opacity_effect)
 
@@ -52,49 +54,67 @@ class HoverButton(QPushButton):
 
 
 
-class ClickableLabel(QLabel):
+class AppButton(QPushButton):
+    buttonClicked = pyqtSignal(int)  # 사용자 정의 신호 생성
+
     def __init__(self, index, text, parent=None):
         super().__init__(text, parent)
         self.index = index
+        self.setStyleSheet(
+            'background: black; color: white; font-size: 20px; border-radius: 1.5em;'
+        )
+        # Create a QGraphicsOpacityEffect object
         self.opacity_effect = QGraphicsOpacityEffect(self)
-        self.opacity_effect.setOpacity(0.4)  # 50% opacity
+        # Set the opacity level. The value should be between 0 (completely transparent) and 1 (completely opaque).
+        self.opacity_effect.setOpacity(0.2)
+        # Apply the opacity effect to the button
         self.setGraphicsEffect(self.opacity_effect)
-        
+
+    # def enterEvent(self, event):
+    #     self.opacity_effect.setOpacity(0.6)
+    #     self.setGraphicsEffect(self.opacity_effect)
+
+    # def leaveEvent(self, event):
+    #     self.opacity_effect.setOpacity(0.2)
+    #     self.setGraphicsEffect(self.opacity_effect)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.opacity_effect.setOpacity(0.7)
             self.setGraphicsEffect(self.opacity_effect)
-
         return super().mousePressEvent(event)
-    
+
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            print(f'Label {self.index} clicked')
-            self.opacity_effect.setOpacity(0.4)
+            self.opacity_effect.setOpacity(0.2)
             self.setGraphicsEffect(self.opacity_effect)
+            self.buttonClicked.emit(self.index)  # buttonClicked 신호 발생
 
         return super().mouseReleaseEvent(event)
 
 
 
-class AppLabels(QWidget):
+class AppButtons(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.vlayout = QVBoxLayout(self)
         self.vlayout.addStretch()
 
-        for i in range(2):  # For example, create 3 labels
-            #label = QLabel(f'Label {i+1}', self)
-            label = ClickableLabel(i+1, f'Label {i+1}', self)
-            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            label.setStyleSheet('background: black; color: white; font-size: 20px; border-radius: 1.5em;')
-            label.setFixedSize(250, 250)
+        self.buttons = []
 
-            self.vlayout.addWidget(label)
-            print(label.size().width(), label.size().height())
+        for i in range(2):  # For example, create 3 labels
+            if(i == 0):
+                button = AppButton(i, f'신체 재활', self)
+            elif(i == 1):
+                button = AppButton(i, f'인지 재활', self)
+            
+            button.setFixedSize(250, 250)
+
+            self.buttons.append(button)
+            self.vlayout.addWidget(button)
+            print(button.size().width(), button.size().height())
 
         self.vlayout.addStretch()
         # create a horizontal layout and add stretch so everything is 
@@ -105,7 +125,11 @@ class AppLabels(QWidget):
     
         self.resize(self.sizeHint())
 
+    def connectButtonClicked(self, handler):
+        for button in self.buttons:
+            button.buttonClicked.connect(handler)
 
+    
 
 class AppWidget(QWidget):
     def __init__(self, parent=None):
@@ -119,7 +143,7 @@ class AppWidget(QWidget):
         appLabelLayout.addWidget(self.btn)
         self.btn.clicked.connect(lambda: self.showAppLabel(self.appLabel))
 
-        self.appLabel = AppLabels(self)
+        self.appLabel = AppButtons(self)
         appLabelLayout.addWidget(self.appLabel)
 
         # Create a widget for the appLabel layout

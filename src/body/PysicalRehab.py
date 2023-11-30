@@ -30,16 +30,16 @@ class PoseGUI(QWidget):
         self.is_capturing = False
 
         # pose screen
-        # self.scene1 = QGraphicsScene(self)
-        # self.view1 = QGraphicsView(self.scene1)
-        self.image_pose = QLabel(self)
-        #self.scene1.addWidget(self.image_pose)
+        self.scene1 = QGraphicsScene(self)
+        self.view1 = QGraphicsView(self.scene1)
+        self.image_pose = QGraphicsPixmapItem(self)
+        self.scene1.addWidget(self.image_pose)
 
         # game screen
-        # self.scene2 = QGraphicsScene(self)
-        # self.view2 = QGraphicsView(self.scene2)
-        self.image_game = QLabel(self)
-        # self.scene2.addItem(self.image_game)
+        self.scene2 = QGraphicsScene(self)
+        self.view2 = QGraphicsView(self.scene2)
+        self.image_game = QGraphicsPixmapItem(self)
+        self.scene2.addItem(self.image_game)
 
         # horizion layout
         self.hlayout = QHBoxLayout()

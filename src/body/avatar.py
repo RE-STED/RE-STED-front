@@ -44,5 +44,5 @@ class Avatar(QWidget):
                 cv2.line(img, (int(pm.joint_pos_dict[p].x * self.width), 
                                int(pm.joint_pos_dict[p].y * self.height)), 
                                (int(pm.joint_pos_dict[q].x * self.width), 
-                                int(pm.joint_pos_dict[q].y * self.height)), (245, 66, 230), 5)
+                                int(pm.joint_pos_dict[q].y * self.height)), (0, 0, 0), 5)
         return img

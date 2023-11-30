@@ -6,7 +6,7 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
-from body.gui import PoseGUI
+# from body.gui import PoseGUI
 # from body.main2 import PoseGUI
 
 
@@ -24,13 +24,14 @@ class MainWindow(QMainWindow):
         self.layout = QStackedLayout()
         self.layout.addWidget(self.handTrackWidget)
 
-        central_widget = QWidget(self)
-        central_widget.setLayout(self.layout)
-        self.setCentralWidget(central_widget)
+        self.central_widget = QWidget(self)
+        self.central_widget.setLayout(self.layout)
+        self.setCentralWidget(self.central_widget)
+        self.hideMouseCursor()
 
         #self.layout.setCurrentWidget(self.appLabel)
-        #self.addAppLabelWidget()
-        self.addBodyWidget()
+        self.addAppLabelWidget()
+        #self.addBodyWidget()
 
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
 
@@ -47,6 +48,18 @@ class MainWindow(QMainWindow):
         self.appLabelWidget = AppWidget(self)
         self.layout.addWidget(self.appLabelWidget.appLabelWidget)
         self.layout.setCurrentWidget(self.appLabelWidget.appLabelWidget)
+
+
+    def hideMouseCursor(self):
+        central_widget = self.centralWidget()
+        if isinstance(central_widget, QWidget):
+            central_widget.setCursor(Qt.CursorShape.BlankCursor)
+
+
+    def showMouseCursor(self):
+        central_widget = self.centralWidget()
+        if isinstance(central_widget, QWidget):
+            central_widget.unsetCursor()
 
 
     # AppButton이 클릭될 때 실행되는 슬롯

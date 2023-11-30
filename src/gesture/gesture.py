@@ -43,6 +43,7 @@ class GestureThread(QThread):
 
 
 class GestureWidget(QWidget):
+
     def __init__(self, parent=None, cam=None):
         super().__init__(parent)
         self.cam = cam
@@ -50,18 +51,20 @@ class GestureWidget(QWidget):
         #print("handtrack widget size", self.screen_geometry.width(), self.screen_geometry.height())
         self.video_label = QLabel(self)
         self.video_label.resize(self.screen_geometry.width(), self.screen_geometry.height())
+        self.gesture = None
+        self.cursorFlag = False
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)  # Set all margins to 0
         self.layout.addWidget(self.video_label)
         
         self.gesture_recognizer = self.initialize_gesture_recognizer()
-        self.prev_5_gesture_queue = deque(maxlen=5)
+        self.prev_gesture_queue = deque(maxlen=7)
         self.start_video()
 
 
     def initialize_gesture_recognizer(self):
         cwd = os.getcwd()
-        model_path = os.path.join(cwd, 'RND', 'gesture_recognizer (4).task')
+        model_path = os.path.join(cwd, 'model', 'gesture', 'gesture_recognizer(add_rock).task')
         options = mp.tasks.vision.GestureRecognizerOptions(
             base_options=mp.tasks.BaseOptions(model_asset_path=model_path),
             running_mode=mp.tasks.vision.RunningMode.LIVE_STREAM,
@@ -71,8 +74,11 @@ class GestureWidget(QWidget):
 
 
     def moveCursor(self, result, output_image, timestamp_ms):
+        x, y = QCursor.pos().x(), QCursor.pos().y()
+
+
         if result.hand_landmarks:
-            if hasattr(self, 'image_height'):
+            if hasattr(self, 'image_height') and self.cursorFlag == True:
             # point is relative to the image size + widget absolute position
                 x = statistics.mean([result.hand_landmarks[0][0].x * self.image_height, 
                                     result.hand_landmarks[0][3].x * self.image_height, 
@@ -83,31 +89,44 @@ class GestureWidget(QWidget):
                                     result.hand_landmarks[0][3].y * self.image_width, 
                                     result.hand_landmarks[0][17].y * self.image_width]) + self.screen_geometry.y() + self.mapToGlobal(self.video_label.pos()).y()
             
-            else:
-                #set x, y to the current cursor position
-                x, y = QCursor.pos().x(), QCursor.pos().y()
-            #print(self.image_height, self.image_width)
-            #print(self.screen_geometry.x(), self.screen_geometry.y())
-            #print(self.mapToGlobal(self.video_label.pos()).x(), self.mapToGlobal(self.video_label.pos()).y())
-            if(result.gestures):
-                if(len(result.gestures) > 0):
-                    self.prev_5_gesture_queue.append((result.gestures[0][0].category_name, result.gestures[0][0].score))
 
-                    #if prev_5_gesture_queue's the most first element is pinch, then click
-                    prev_5_gesture_list = list(self.prev_5_gesture_queue)
-                    common_gesture = Counter([value[0] for value in prev_5_gesture_list]).most_common(1)
-                    if(common_gesture[0][0] == 'pinch' and common_gesture[0][1] >= 3):
+        if result.gestures:
+            if(len(result.gestures) > 0):
+                self.prev_gesture_queue.append((result.gestures[0][0].category_name, result.gestures[0][0].score))
+
+                prev_gesture_list = list(self.prev_gesture_queue)
+                common_gesture = Counter([value[0] for value in prev_gesture_list]).most_common(1)
+                #print(self.gesture, common_gesture[0][1])
+
+                if common_gesture[0][0] == 'rock':
+                    #calculate the average score of rock
+                    rock_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'rock'])
+                    if(rock_score > 0.85 and self.gesture != 'rock'):
+                        if self.cursorFlag == False:
+                            self.cursorFlag = True
+                            self.window().showMouseCursor()
+                            print("cursor on")
+                        
+                        else:
+                            self.cursorFlag = False
+                            self.window().hideMouseCursor()
+                            print("cursor off")
+                
+                self.gesture = common_gesture[0][0]
+
+                #if prev_gesture_queue has pinch, then click
+                if self.cursorFlag == True:
+                    if common_gesture[0][0] == 'pinch' and common_gesture[0][1] >= 4:
                         #calculate the average score of pinch
-                        pinch_score = statistics.mean([value[1] for value in prev_5_gesture_list if value[0] == 'pinch'])
+                        pinch_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'pinch'])
                         if(pinch_score > 0.6):
-                            #print("left click", QCursor.pos())
                             # left click
                             pymouse.PyMouse().press(int(x), int(y), 1)
                     else:
-                        #print("release click", QCursor.pos())
-                        # right click
                         pymouse.PyMouse().release(int(x), int(y), 1)
-                    #print(result.gestures[0][0].category_name, result.gestures[0][0].score)
+
+
+                print(result.gestures[0][0].category_name, result.gestures[0][0].score)
 
             QCursor.setPos(int(x), int(y))
             QGuiApplication.processEvents()

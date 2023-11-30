@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget
 import cv2
 import mediapipe as mp
+import numpy as np
 
 # ----------------- widget -----------------
 
@@ -10,11 +11,11 @@ class Pose(QWidget):
         self.mp_pose = mp.solutions.pose
         self.mp_drawing = mp.solutions.drawing_utils
         self.pose = self.mp_pose.Pose()
-
+    
     def pose_detect(self, img):
         results = self.pose.process(img)
         pose_landmarks = results.pose_landmarks
-        # print(landmarks)
+        # img = img * 0 + np.ones(img.shape) * 255
         self.draw_landmarks(img, results)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         return img, pose_landmarks

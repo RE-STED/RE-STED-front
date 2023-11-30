@@ -6,8 +6,7 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
-from body.gui import PoseGUI
-# from body.main2 import PoseGUI
+from body.PysicalRehab import PoseGUI
 
 
 class MainWindow(QMainWindow):

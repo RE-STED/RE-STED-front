@@ -1,17 +1,11 @@
 import sys
-import os
-import time
+import cv2
 
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 
-import cv2
-import mediapipe as mp
-import numpy as np
-
-# from widget import Pose
-# from body.thread import Thread1
+sys.path.append('src/body')
 from thread import Thread1
 
 # thread2 for cam

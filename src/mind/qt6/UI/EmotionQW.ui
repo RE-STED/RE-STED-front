@@ -13,17 +13,21 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QStackedWidget" name="stackedWidget">
+  <widget class="QPushButton" name="HomeButton">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>1441</width>
-     <height>871</height>
+     <x>1290</x>
+     <y>730</y>
+     <width>161</width>
+     <height>151</height>
     </rect>
    </property>
-   <widget class="QWidget" name="page"/>
-   <widget class="QWidget" name="page_2"/>
+   <property name="styleSheet">
+    <string notr="true">font: 48pt &quot;.AppleSystemUIFont&quot;;</string>
+   </property>
+   <property name="text">
+    <string>🏠</string>
+   </property>
   </widget>
  </widget>
  <resources/>

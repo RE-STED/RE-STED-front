@@ -377,16 +377,22 @@ class ObjectWidget(DetectionWidget):
     def __init__(self, cam):
         super().__init__()
         
-        self.setStyleSheet("background-image: url(src/mind/qt6/img/bgi.jpeg);")
         
         self.video_size = self.video.size()
 
         self.captureThread = ObjectQuiz(cam)
         self.captureThread.frameCaptured.connect(self.update_frame)
-        self.captureThread.start()
+        
+        self.HomeButton.clicked.connect(self.close_window)
+        self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; } QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
+
+        
 
     def update_frame(self, image):
         # Convert the QImage to QPixmap and show it on the QLabel\
           
         pixmap = QPixmap.fromImage(image).scaled(self.video_size, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
         self.video.setPixmap(pixmap)
+        
+    def close_window(self):
+        self.close()

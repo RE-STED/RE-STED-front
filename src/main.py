@@ -32,9 +32,9 @@ class MainWindow(QMainWindow):
         # Create a stacked layout and add the widgets
         self.layout = QStackedLayout()
         self.layout.addWidget(self.handTrackWidget)
-        #self.layout.addWidget(self.objectDetectionWidget) #    -> Done
-        #self.layout.addWidget(self.pattenWidget) #             -> Perfect
-        #self.layout.addWidget(self.emoWidget) #                -> Perfect
+        #self.layout.addWidget(self.objectDetectionWidget) ; self.objectDetectionWidget.captureThread.start() #    -> Done
+        self.layout.addWidget(self.pattenWidget) #             -> Perfect
+        #self.layout.addWidget(self.emoWidget) #                -> 
 
         central_widget = QWidget(self)
         central_widget.setLayout(self.layout)

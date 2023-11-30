@@ -26,6 +26,22 @@
     <string/>
    </property>
   </widget>
+  <widget class="QPushButton" name="HomeButton">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>710</y>
+     <width>161</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 48pt &quot;.AppleSystemUIFont&quot;;</string>
+   </property>
+   <property name="text">
+    <string>🏠</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

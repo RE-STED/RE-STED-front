@@ -26,6 +26,10 @@ class FindPatterns(PatternWindow):
         self.set_style(self.Answer0); self.set_style(self.Answer1); self.set_style(self.Answer2); self.set_style(self.Answer3); self.set_style(self.Answer4)
         self.set_style(self.Answer5); self.set_style(self.Answer6); self.set_style(self.Answer7); self.set_style(self.Answer8); self.set_style(self.Answer9)
         
+        self.HomeButton.clicked.connect(self.close_window)
+        self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; } QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
+
+        
         # Game Setting
         self.size = 9
         self.tile = {'heart' : '♥', 'spade' : '♠', 'diamond' : '♦', 'club' : '♣', 'star' : '★', 'circle' : '●'}

@@ -20,10 +20,13 @@ EmotionQW = uic.loadUiType("src/mind/qt6/UI/EmotionQW.ui")[0]
 class EmotionWidget(QWidget, EmotionQW):
     def __init__(self):
         super().__init__()
+        self.setupUi(self)
         # PyQt6
         
-        # QWidget의 배경 없애기
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.HomeButton = self.findChild(QPushButton, "HomeButton")
+        self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; } QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
+
+        self.HomeButton.raise_()
         
         # Qwidget 크기 조정
         self.resize(1920, 1080)

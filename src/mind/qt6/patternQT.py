@@ -33,13 +33,15 @@ class PatternWindow(QWidget, Board):
         if Result:
             QMessageBox.about(self, "정답", "정답입니다!")
             time.sleep(1)
-            self.close()
+            self.close_window()
         else:
             QMessageBox.about(self, "오답", "[빠진 문자]가 있는지 \n또는\n [숨겨진 숫자]를 확인해주세요!")
             
     def set_style(self, btn):
         btn.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; } QPushButton:hover { font-weight: bold; font-size: 33pt;}");
-            
+        
+    def close_window(self):
+        self.close()
             
         
 

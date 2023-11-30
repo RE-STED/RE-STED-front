@@ -4,6 +4,7 @@ from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve
 
 from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
+from menu.bodywidget import PhysicalRehabWidget
 from cam import Cam
 
 # from body.gui import PoseGUI
@@ -86,9 +87,9 @@ class MainWindow(QMainWindow):
     def addPysicalRehabWidget(self):
         self.appLabelWidget.appLabelWidget.hide()
         print("addPysicalRehabWidget")
-        # self.physicalRehabWidget = PhysicalRehabWidget(self)
-        # self.layout.addWidget(self.physicalRehabWidget)
-        # self.layout.setCurrentWidget(self.physicalRehabWidget)
+        self.physicalRehabWidget = PhysicalRehabWidget(self)
+        self.layout.addWidget(self.physicalRehabWidget)
+        self.layout.setCurrentWidget(self.physicalRehabWidget)
     
     
     def addCognitiveRehabWidget(self):

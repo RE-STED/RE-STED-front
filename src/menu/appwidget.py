@@ -104,7 +104,7 @@ class AppButtons(QWidget):
 
         self.buttons = []
 
-        for i in range(2):  # For example, create 3 labels
+        for i in range(2):  # For example, create 2 labels
             if(i == 0):
                 button = AppButton(i, f'신체 재활', self)
             elif(i == 1):

@@ -33,8 +33,8 @@ class MainWindow(QMainWindow):
         self.layout = QStackedLayout()
         self.layout.addWidget(self.handTrackWidget)
         #self.layout.addWidget(self.objectDetectionWidget) ; self.objectDetectionWidget.captureThread.start() #    -> Done
-        self.layout.addWidget(self.pattenWidget) #             -> Perfect
-        #self.layout.addWidget(self.emoWidget) #                -> 
+        #self.layout.addWidget(self.pattenWidget) #             -> Perfect
+        self.layout.addWidget(self.emoWidget) #                -> 
 
         central_widget = QWidget(self)
         central_widget.setLayout(self.layout)

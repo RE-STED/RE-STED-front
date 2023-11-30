@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="HomeButton">
    <property name="geometry">
     <rect>
-     <x>1290</x>
-     <y>730</y>
+     <x>1230</x>
+     <y>680</y>
      <width>161</width>
      <height>151</height>
     </rect>

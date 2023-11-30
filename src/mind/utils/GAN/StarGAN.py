@@ -38,7 +38,7 @@ class StarGAN:
         #print("Device: ", self.device)
 
         # Directories.
-        self.model_save_dir = "model/gan/"
+        self.model_save_dir = "src/mind/model/gan/"
 
         # Build the model and tensorboard.
         self.g_lr = 0.0001

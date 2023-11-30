@@ -14,7 +14,7 @@
    <string>StackedWidget</string>
   </property>
   <property name="currentIndex">
-   <number>3</number>
+   <number>1</number>
   </property>
   <widget class="QWidget" name="page1">
    <widget class="QLabel" name="label">
@@ -93,10 +93,10 @@
    <widget class="QLabel" name="ImgForGroup">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>110</y>
-      <width>381</width>
-      <height>291</height>
+      <x>460</x>
+      <y>200</y>
+      <width>441</width>
+      <height>341</height>
      </rect>
     </property>
     <property name="text">

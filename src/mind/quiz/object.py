@@ -395,4 +395,8 @@ class ObjectWidget(DetectionWidget):
         self.video.setPixmap(pixmap)
         
     def close_window(self):
+        for i in range(100):
+            i = i / 100
+            self.setWindowOpacity(1 - i)
+            time.sleep(0.005)
         self.close()

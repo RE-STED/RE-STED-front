@@ -41,6 +41,10 @@ class PatternWindow(QWidget, Board):
         btn.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; } QPushButton:hover { font-weight: bold; font-size: 33pt;}");
         
     def close_window(self):
+        for i in range(100):
+            i = i / 100
+            self.setWindowOpacity(1 - i)
+            time.sleep(0.005)
         self.close()
             
         

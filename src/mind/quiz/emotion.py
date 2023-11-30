@@ -26,18 +26,29 @@ class EmotionWidget(QWidget, EmotionQW):
         self.HomeButton = self.findChild(QPushButton, "HomeButton")
         self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; } QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
 
-        self.HomeButton.raise_()
+        self.HomeButton.clicked.connect(self.End)
         
         # Qwidget 크기 조정
         self.resize(1920, 1080)
+        
+        self.setStyleSheet("background-color: rgba(0, 0, 0, 30);")
+        
+        # self.opacity_effect = QGraphicsOpacityEffect(self)
+        # # Set the opacity level. The value should be between 0 (completely transparent) and 1 (completely opaque).
+        # self.opacity_effect.setOpacity(0.4)
+        # # Apply the opacity effect to the button
+        # self.setGraphicsEffect(self.opacity_effect)
+
 
         self.stack = EmotionBoard()
         
         layout = QVBoxLayout()
         layout.addWidget(self.stack)
         self.setLayout(layout)
+        self.HomeButton.raise_()
         
         self.stack.widget(0).findChild(QPushButton, "SelectCeleb").clicked.connect(self.Start)
+
         self.stack.widget(0).findChild(QPushButton, "SelectFamily").clicked.connect(self.Start)
         
         self.stack.widget(2).findChild(QPushButton, "SadBtn_2").clicked.connect(self.push_answer)
@@ -75,8 +86,15 @@ class EmotionWidget(QWidget, EmotionQW):
             img_label = self.stack.widget(1).findChild(QLabel, "ImgForOne")
         elif self.mode == 'group':
             img_label = self.stack.widget(1).findChild(QLabel, "ImgForGroup")
+        
+        img_label.raise_()
         pixmap = QPixmap(self.img_path).scaled(img_label.size(), Qt.AspectRatioMode.KeepAspectRatioByExpanding)
         img_label.setPixmap(pixmap)
+        img_label.show() 
+        # # pixmap으로 표시하는 img_label은 투명도를 0으로 설정
+        # img_opacity = QGraphicsOpacityEffect(img_label)
+        # img_opacity.setOpacity(1)
+        # img_label.setGraphicsEffect(img_opacity)
         
         self.stack.widget(1).findChild(QLabel, "name").setText(self.who)
         self.stack.setCurrentIndex(1)
@@ -136,12 +154,15 @@ class EmotionWidget(QWidget, EmotionQW):
             img_collection = facial_dict[who]
             self.target = random.choice(list(img_collection.keys()))
             
+            #pixmap = QPixmap(self.img_path).scaled(img_label.size(), Qt.AspectRatioMode.KeepAspectRatioByExpanding)
+
+            
             img = img_collection[self.target].numpy().transpose(1,2,0)
             cv2.imshow('img', cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
             
             img_label = self.stack.widget(3).findChild(QLabel, "Person")
             w, h = img_label.width(), img_label.height()
-            img = QPixmap(self.np2Qimg(img)).scaled(w, h, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
+            img = QPixmap.fromImage(self.np2Qimg(img))#.scaled(w, h, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
             img_label.setPixmap(img)
             
             self.stack.setCurrentIndex(3)
@@ -216,17 +237,21 @@ class EmotionWidget(QWidget, EmotionQW):
             AnswerMsg.exec()
         
     def End(self):
-        # 창 아예 닫기
+        for i in range(100):
+            i = i / 100
+            self.setWindowOpacity(1 - i)
+            time.sleep(0.005)
         self.close()
+        
+    
         
     def np2Qimg(self, input):
         print(input.shape)
         height, width, channel = input.shape
         input = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
-        bytesPerLine = 3 * width
-        qImg = QImage(input.tobytes(), width, height, bytesPerLine, QImage.Format.Format_RGB888)
-    
-        pixmap = QPixmap(qImg)
+        bytesPerLine = channel * width
+        qImg = QImage(input.data, width, height, bytesPerLine, QImage.Format.Format_RGB888)
+        #pixmap = QPixmap(qImg)
         
-        return pixmap
+        return qImg
         

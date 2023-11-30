@@ -11,7 +11,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 
-def get_dlib_face_detector(predictor_path: str = "model/facemesh/shape_predictor_68_face_landmarks.dat"):
+def get_dlib_face_detector(predictor_path: str = "src/mind/model/facemesh/shape_predictor_68_face_landmarks.dat"):
 
     if not os.path.isfile(predictor_path):
         model_file = "shape_predictor_68_face_landmarks.dat.bz2"

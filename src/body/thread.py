@@ -29,10 +29,7 @@ class Thread1(QThread):
             img = cv2.flip(img, 1)
 
             # img preprocessing & pose landmark detection
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img.flags.writeable = True
             img, pose_landmarks = self.Pose.pose_detect(img)
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
             # save joint info
             try:
@@ -60,13 +57,15 @@ class Thread1(QThread):
                     2,
                     cv2.LINE_AA,
                 )
-                img = cv2.cvtColor(img, cv2.COLOR_BGRRGB)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                print("real:", img.shape)
                 # draw avatar
                 img = self.Avatar.drawimg()
                 img = img.reshape(self.Avatar.height, self.Avatar.width, -1)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                print("avatar:", img.shape)
             except:
                 print('no pose')
-            print(img.shape)
             h, w, ch = img.shape
             bytesPerLine = ch * w
             

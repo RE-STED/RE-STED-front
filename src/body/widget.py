@@ -13,11 +13,14 @@ class Pose(QWidget):
         self.pose = self.mp_pose.Pose()
     
     def pose_detect(self, img):
+        img.flags.writeable = False
         results = self.pose.process(img)
-        pose_landmarks = results.pose_landmarks
-        # img = img * 0 + np.ones(img.shape) * 255
-        self.draw_landmarks(img, results)
+        img.flags.writeable = True
+
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        
+        pose_landmarks = results.pose_landmarks
+        self.draw_landmarks(img, results) # draw landmarks
         return img, pose_landmarks
 
     def draw_landmarks(self, img, results):

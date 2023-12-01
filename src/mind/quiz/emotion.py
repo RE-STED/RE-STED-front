@@ -81,7 +81,7 @@ class EmotionWidget(QWidget, EmotionQW):
         category = 1 if self.sender().text() == '가족' else 2
         
         self.img_path, self.mode = self.get_who(str(category))
-        print(self.img_path)
+        #print(self.img_path)
         if self.mode == 'origin_person':
             img_label = self.stack.widget(1).findChild(QLabel, "ImgForOne")
         elif self.mode == 'group':
@@ -101,7 +101,8 @@ class EmotionWidget(QWidget, EmotionQW):
         
         time.sleep(3)
         
-        self.Quiz()
+        self.Quiz(self.model().ConvertFace(img_path = self.img_path, 
+                                               trans_mode = self.mode))
         
     
     def get_who(self, category) -> str :
@@ -130,21 +131,19 @@ class EmotionWidget(QWidget, EmotionQW):
         print(f'선택된 인물은 {self.who} 입니다.')
         return self.img_dir + img_name, mode
     
-    def Quiz(self):
+    def Quiz(self, dict):
 
         
-        # 메시지 박스 생성
+        # 메시지 박스 생성하여 우측 상다단에 위치
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("이미지를 변환하는 중입니다...")
         msg.setWindowTitle("진행 중")
-        #msg.setStandardButtons(QMessageBox.StandardButton.NoButton)
         
         # 메시지 박스 띄우기
         retval = msg.exec()
         
-        facial_dict = self.model().ConvertFace(img_path = self.img_path, 
-                                               trans_mode = self.mode)
+        facial_dict = dict
         
         msg.close()
         
@@ -158,11 +157,12 @@ class EmotionWidget(QWidget, EmotionQW):
 
             
             img = img_collection[self.target].numpy().transpose(1,2,0)
-            cv2.imshow('img', cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+            img = (img * 255).astype(np.uint8)
+            #cv2.imshow('img', cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
             
             img_label = self.stack.widget(3).findChild(QLabel, "Person")
             w, h = img_label.width(), img_label.height()
-            img = QPixmap.fromImage(self.np2Qimg(img))#.scaled(w, h, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
+            img = QPixmap.fromImage(self.np2Qimg(img)).scaled(w, h, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
             img_label.setPixmap(img)
             
             self.stack.setCurrentIndex(3)
@@ -177,12 +177,14 @@ class EmotionWidget(QWidget, EmotionQW):
             img_collection = facial_dict[who]
             self.target = facial_dict['answer']
             img = img_collection.numpy().transpose(1,2,0)
-            cv2.imshow('img', cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+            img = (img * 255).astype(np.uint8)
+            #cv2.imshow('img', cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
             img_label = self.stack.widget(2).findChild(QLabel, "People")
             w, h = img_label.width(), img_label.height()
-            img = self.np2Qimg(img).scaled(w, h, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
+            img = QPixmap.fromImage(self.np2Qimg(img)).scaled(w, h, Qt.AspectRatioMode.KeepAspectRatioByExpanding)
             img_label.setPixmap(img)
+        
             
             self.stack.setCurrentIndex(2)
             
@@ -246,12 +248,9 @@ class EmotionWidget(QWidget, EmotionQW):
     
         
     def np2Qimg(self, input):
-        print(input.shape)
         height, width, channel = input.shape
-        input = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
         bytesPerLine = channel * width
-        qImg = QImage(input.data, width, height, bytesPerLine, QImage.Format.Format_RGB888)
-        #pixmap = QPixmap(qImg)
+        qImg = QImage(input.tobytes(), width, height, bytesPerLine, QImage.Format.Format_RGB888)
         
         return qImg
         

@@ -111,7 +111,7 @@ class StarGAN:
 
             c_trg_list.append(c_trg.to(self.device))
         return c_trg_list
-    
+
     def ConvertFace(self, img_path, trans_mode = 'origin_person'):
         """Translate images using StarGAN trained on a single dataset."""
         # Load the trained generator.
@@ -133,7 +133,7 @@ class StarGAN:
             norm = T.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
             
             img_file = cv2.cvtColor(img_list[0], cv2.COLOR_BGR2RGB)
-            #img_file = cv2.cvtColor(img_file, cv2.COLOR_BGR2RGB)
+            
             original = totensor(img_file)
             original = norm(original)
 
@@ -220,8 +220,8 @@ class StarGAN:
             transform = T.Compose(transform)
             
             x_real = transform(img)
-            tf = T.ToPILImage()
-            img_np = tf(x_real)
+            # tf = T.ToPILImage()
+            # img_np = tf(x_real)
             x_real = x_real.view(1, 3, image_size, image_size)
             
             c_org = torch.Tensor([3])

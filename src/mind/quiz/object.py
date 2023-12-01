@@ -384,7 +384,7 @@ class ObjectWidget(DetectionWidget):
         self.captureThread.frameCaptured.connect(self.update_frame)
         
         self.HomeButton.clicked.connect(self.close_window)
-        self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; } QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
+        self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
 
         
 

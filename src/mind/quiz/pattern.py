@@ -27,12 +27,13 @@ class FindPatterns(PatternWindow):
         self.set_style(self.Answer5); self.set_style(self.Answer6); self.set_style(self.Answer7); self.set_style(self.Answer8); self.set_style(self.Answer9)
         
         self.HomeButton.clicked.connect(self.close_window)
-        self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; } QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
+        self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
 
         
         # Game Setting
         self.size = 9
-        self.tile = {'heart' : '♥', 'spade' : '♠', 'diamond' : '♦', 'club' : '♣', 'star' : '★', 'circle' : '●'}
+        self.tile = {'heart' : '❤️', 'spade' : '♠️', 'diamond' : '♦️', 'club' : '🍀', 'star' : '⭐️', 'circle' : '🔵'}
+        self.color_tile = {'heart' : 'red', 'spade' : 'black', 'diamond' : 'red', 'club' : 'green', 'star' : 'gold', 'circle' : 'blue'}
         self.count = dict.fromkeys(self.tile.keys(), 0)
         self.coordinate = {key: set() for key in self.tile.keys()}
         
@@ -79,12 +80,12 @@ class FindPatterns(PatternWindow):
         y, x, _, _ = self.GameBoard.getItemPosition(index)
         if btn.isFlat():
             self.cor_answer.discard((y, x))
-            btn.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; } QPushButton:hover { font-weight: bold; }");
+            btn.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; border-radius: 1.2em;} QPushButton:hover { font-weight: bold; }");
 
 
         else:
             self.cor_answer.add((y, x))
-            btn.setStyleSheet("QPushButton { background-color: black; font-size: 30pt; color: white; } QPushButton:hover { font-weight: bold; }")
+            btn.setStyleSheet("QPushButton { background-color: black; font-size: 30pt; color: white; border-radius: 1.2em;} QPushButton:hover { font-weight: bold; }")
 
 
         
@@ -273,6 +274,8 @@ class FindPatterns(PatternWindow):
                 button = self.GameBoard.itemAtPosition(i, j).widget()
                 button.setFixedSize(70, 70)
                 #button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-                button.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; } QPushButton:hover { font-weight: bold; }");
                 button.setText(self.board[i][j])
+                
+                button.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; border-radius: 1.5em;} QPushButton:hover { font-weight: bold; }");
+                
                 button.clicked.connect(self.add_cordinate)

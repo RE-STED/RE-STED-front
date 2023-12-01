@@ -14,7 +14,7 @@ from thread import Thread1
 
 class PoseGUI(QWidget):
 
-    def __init__(self, parant=None, cam=None):
+    def __init__(self, parent=None, cam=None):
         super().__init__()
         # cam
         self.background = QLabel(self)
@@ -33,6 +33,7 @@ class PoseGUI(QWidget):
         # pose screen
         self.scene1 = QGraphicsScene(self)
         self.view1 = QGraphicsView(self.scene1)
+        self.view1.scale(0.4, 0.4)
         self.image_pose = QGraphicsPixmapItem()
         self.scene1.addItem(self.image_pose)
 

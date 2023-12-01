@@ -35,7 +35,6 @@ poseIndex = [
     "RIGHT_FOOT_INDEX",
 ]
 # left side
-
 left_knee = ["LEFT_HIP", "LEFT_KNEE", "LEFT_ANKLE"]
 left_hip = ["LEFT_SHOULDER", "LEFT_HIP", "LEFT_KNEE"]
 left_ankle = ["LEFT_KNEE", "LEFT_ANKLE", "LEFT_FOOT_INDEX"]

@@ -14,12 +14,12 @@ import function as fn
 # thread1 for pose estimation
 class Thread1(QThread):
     updateImg = pyqtSignal(QImage, int, int)
-    def __init__(self, cam, parant=None):
+    def __init__(self, cam, parent=None):
         super().__init__()
         self.running = True
         self.Cam = cam
         self.Pose = Pose()
-        self.Avatar = Avatar(1920, 1080, parant=self)
+        self.Avatar = Avatar(1920, 1080, parent=self)
 
     def run(self):
         # cam = Cam()
@@ -28,30 +28,27 @@ class Thread1(QThread):
             img = self.Cam.capture() 
             img = cv2.flip(img, 1)
 
-            # img preprocessing & pose landmark detection
-            img, pose_landmarks = self.Pose.pose_detect(img)
-
-            # save joint info
+            # ------ pose estimation ------
+            # self.Pose.process(img)
+            # img = self.Avatar.process(self.Pose.joint_pos_dict)
             try:
-                for i, landmark in enumerate(pose_landmarks.landmark):
-                    pm.joint_pos_dict[pm.poseIndex[i]] = pm.Joint(landmark)
-
-                # save joint angle
-                for joint in pm.joint_angle_list:
-                    pm.joint_pos_dict[joint[1]].angle = fn.extract_angle(joint)
-                    print(joint[2], end =':')
-                    print(pm.joint_pos_dict[joint[1]].angle)
-                    pm.saveAngle[joint[1]].append(pm.joint_pos_dict[joint[1]].angle)
-                print('----------------------------------------------')
-
-                img = self.Avatar.process()
-                # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                self.Pose.process(img)
+                img = self.Avatar.process(self.Pose.joint_pos_dict)
+                img = cv2.flip(img, 1)
+                h, w, _ = img.shape
+                if w <= 0 or h <= 0:
+                    raise Exception
             except:
                 print('no pose')
-                            # draw avatar
-            # img = self.Avatar.process()
+                # init camera pose
+                img = self.Cam.capture() 
+                h, w, _ = img.shape
+                # writing on image in the center red color bigger than cv2.LineAA
+                cv2.putText(img, 'Show your face', (int(w/2), int(h/2)), cv2.FONT_HERSHEY_SIMPLEX, 5, (0, 0, 255), 5, cv2.LINE_AA)
+
+            
+            # ------ send img to gui ------
             print(img.shape)
-            img = cv2.flip(img, 1)
             h, w, ch = img.shape
             bytesPerLine = ch * w
             
@@ -71,11 +68,12 @@ class Thread1(QThread):
     def off(self):
         self.running = False
 
-# thread2 for pygame
+# thread2 for guide
 class Thread2(QThread):
     def __init__(self):
         super().__init__()
         self.running = True
+        self.cam = cv2.VideoCapture('data/video/LEFT_ELBOW.mp4')
     
     def run(self):
         while self.running:

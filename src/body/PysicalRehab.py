@@ -6,7 +6,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 
 sys.path.append('src/body')
-from thread import Thread1
+from thread import Thread1, Thread2
 
 # thread2 for cam
   
@@ -21,7 +21,8 @@ class PoseGUI(QWidget):
         self.Cam = cam
 
         # thread
-        self.thread1 = Thread1(self.Cam)
+        self.thread1 = Thread1(cam=self.Cam, parent=self)
+        self.thread2 = Thread2()
         # self.thread1 = Thread2()
 
         # button
@@ -29,7 +30,6 @@ class PoseGUI(QWidget):
         self.startButton.clicked.connect(self.toggle_capture)
         self.is_capturing = False
 
-        self.scene1 = QGraphicsScene(self) # pose
         # pose screen
         self.scene1 = QGraphicsScene(self)
         self.view1 = QGraphicsView(self.scene1)
@@ -37,12 +37,12 @@ class PoseGUI(QWidget):
         self.image_pose = QGraphicsPixmapItem()
         self.scene1.addItem(self.image_pose)
 
-        self.scene2 = QGraphicsScene(self) # game
-        # game screen
+        # guide screen
         self.scene2 = QGraphicsScene(self)
         self.view2 = QGraphicsView(self.scene2)
-        self.image_game = QGraphicsPixmapItem()
-        # self.scene2.addItem(self.image_game)
+        self.view2.scale(0.4, 0.4)
+        self.image_guide = QGraphicsPixmapItem()
+        self.scene2.addItem(self.image_guide)
 
         # horizion layout
         self.hlayout = QHBoxLayout()
@@ -57,7 +57,7 @@ class PoseGUI(QWidget):
 
         self.background.setLayout(vlayout)
 
-          # 원하는 업데이트 간격을 밀리초 단위로 설정
+    # ----------------- thread 1 -----------------
     def set_thread1(self, image, height, width):
         self.image_pose.setPixmap(QPixmap.fromImage(image))
 
@@ -66,26 +66,32 @@ class PoseGUI(QWidget):
         self.thread1.start()
         self.thread1.updateImg.connect(self.set_thread1)
 
-    # def set_thread2(self, image, height, width):
-    #     self.image_game.setPixmap(QPixmap.fromImage(image))
+    # ----------------- thread 2 -----------------
+    def set_thread2(self, image, height, width):
+        self.image_guide.setPixmap(QPixmap.fromImage(image))
     
-    # def start_thread2(self):
-    #     self.thread2.start()
-    #     self.thread2.updateImg.connect(self.set_thread2)
+    def start_thread2(self):
+        self.thread2 = Thread2(parent=self)
+        self.thread2.start()
+        self.thread2.updateImg.connect(self.set_thread2)
+
         
     def toggle_capture(self):
         if self.is_capturing: # stop
             self.is_capturing = False
             self.thread1.off()
+            self.thread2.off()
             self.startButton.setText('Start Pose Estimation')
         else: # start
             self.is_capturing = True
             self.start_thread1()
+            self.start_thread2()
             self.thread1.on()
+            self.thread2.on()
             self.startButton.setText('Stop Pose Estimation')
 
 
-# gui2 for pygame
+# gui2 for pyguide
 # gui3 for botton
 
 if __name__ == '__main__':

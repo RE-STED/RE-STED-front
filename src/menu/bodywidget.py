@@ -115,8 +115,19 @@ class PhysicalRehabWidget(QWidget):
         
 
         self.appLabel = AppButtonsWidget(self)
+        self.appLabel.connectButtonClicked(self.handleButtonClicked)
         appLabelLayout.addWidget(self.appLabel)
 
         # self.appLabelWidget = QWidget(self)
         self.setLayout(appLabelLayout)
         self.setStyleSheet("background-color: transparent;")
+
+    
+    # AppButton이 클릭될 때 실행되는 슬롯
+    def handleButtonClicked(self, button_index):
+        if button_index == 0:
+            print("0번째 운동 실행")
+            pass
+        elif button_index == 1:
+            print("1번째 운동 실행")
+            pass

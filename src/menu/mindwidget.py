@@ -75,6 +75,7 @@ class AppButtonsWidget(QWidget):
     
         self.resize(self.sizeHint())
 
+
     def connectButtonClicked(self, handler):
         for button in self.buttons:
             button.buttonClicked.connect(handler)
@@ -113,8 +114,18 @@ class CognitiveRehabWidget(QWidget):
         
 
         self.appLabel = AppButtonsWidget(self)
+        self.appLabel.connectButtonClicked(self.handleButtonClicked)
         appLabelLayout.addWidget(self.appLabel)
 
         # self.appLabelWidget = QWidget(self)
         self.setLayout(appLabelLayout)
         self.setStyleSheet("background-color: transparent;")
+
+
+    def handleButtonClicked(self, index):
+        if(index == 0):
+            print("Mind Quiz")
+        elif(index == 1):
+            print("Find Something")
+        elif(index == 2):
+            print("Guess Face")

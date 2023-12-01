@@ -95,7 +95,7 @@ class AppButton(QPushButton):
 
 
 
-class AppButtons(QWidget):
+class AppButtonsWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -143,7 +143,7 @@ class AppWidget(QWidget):
         appLabelLayout.addWidget(self.btn)
         self.btn.clicked.connect(lambda: self.showAppLabel(self.appLabel))
 
-        self.appLabel = AppButtons(self)
+        self.appLabel = AppButtonsWidget(self)
         appLabelLayout.addWidget(self.appLabel)
 
         # Create a widget for the appLabel layout

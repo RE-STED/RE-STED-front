@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve
 from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from menu.bodywidget import PhysicalRehabWidget
+from menu.mindwidget import CognitiveRehabWidget
 from cam import Cam
 
 # from body.gui import PoseGUI
@@ -47,8 +48,8 @@ class MainWindow(QMainWindow):
 
     def addAppLabelWidget(self):
         self.appLabelWidget = AppWidget(self)
-        self.layout.addWidget(self.appLabelWidget.appLabelWidget)
-        self.layout.setCurrentWidget(self.appLabelWidget.appLabelWidget)
+        self.layout.addWidget(self.appLabelWidget)
+        self.layout.setCurrentWidget(self.appLabelWidget)
 
 
     def hideMouseCursor(self):
@@ -77,27 +78,35 @@ class MainWindow(QMainWindow):
     #     self.appLabelWidget.deleteLater()
 
         
-    # def addBodyWidget(self):
-    #     self.poseWidget = PoseGUI(self, self.cam)
-    #     self.layout.addWidget(self.poseWidget.background)
-    #     self.layout.setCurrentWidget(self.poseWidget.background)
-
-
-
     def addPysicalRehabWidget(self):
-        self.appLabelWidget.appLabelWidget.hide()
+        self.appLabelWidget.hide()
         print("addPysicalRehabWidget")
         self.physicalRehabWidget = PhysicalRehabWidget(self)
         self.layout.addWidget(self.physicalRehabWidget)
         self.layout.setCurrentWidget(self.physicalRehabWidget)
+
+
+    def deletePhysicalRehabWidget(self):
+        print("deletePhysicalRehabWidget")
+        self.layout.removeWidget(self.physicalRehabWidget)
+        self.physicalRehabWidget.deleteLater()
+        self.appLabelWidget.show()
+        self.layout.setCurrentWidget(self.appLabelWidget)
     
     
     def addCognitiveRehabWidget(self):
-        self.appLabelWidget.appLabelWidget.hide()
+        self.appLabelWidget.hide()
         print("addCognitiveRehabWidget")
-        # self.cognitiveRehabWidget = CognitiveRehabWidget(self)
-        # self.layout.addWidget(self.cognitiveRehabWidget)
-        # self.layout.setCurrentWidget(self.cognitiveRehabWidget)
+        self.cognitiveRehabWidget = CognitiveRehabWidget(self)
+        self.layout.addWidget(self.cognitiveRehabWidget)
+        self.layout.setCurrentWidget(self.cognitiveRehabWidget)
+
+    def deleteCognitiveRehabWidget(self):
+        print("deleteCognitiveRehabWidget")
+        self.layout.removeWidget(self.cognitiveRehabWidget)
+        self.cognitiveRehabWidget.deleteLater()
+        self.appLabelWidget.show()
+        self.layout.setCurrentWidget(self.appLabelWidget)
 
 
 if __name__ == '__main__':

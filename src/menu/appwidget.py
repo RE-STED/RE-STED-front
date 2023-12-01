@@ -147,9 +147,9 @@ class AppWidget(QWidget):
         appLabelLayout.addWidget(self.appLabel)
 
         # Create a widget for the appLabel layout
-        self.appLabelWidget = QWidget(self)
-        self.appLabelWidget.setLayout(appLabelLayout)
-        self.appLabelWidget.setStyleSheet("background-color: transparent;")
+        # self.appLabelWidget = QWidget(self)
+        self.setLayout(appLabelLayout)
+        self.setStyleSheet("background-color: transparent;")
 
         self.appLabel.hide()
 

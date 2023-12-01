@@ -56,13 +56,11 @@ class AppButtonsWidget(QWidget):
 
         for i in range(4):
             if(i == 0):
-                button = AppButton(i, f'Shoulder', self)
+                button = AppButton(i, f'Mind Quiz', self)
             elif(i == 1):
-                button = AppButton(i, f'Elbow', self)
+                button = AppButton(i, f'Find Something', self)
             elif(i == 2):
-                button = AppButton(i, f'Wrist', self)
-            elif(i == 3):
-                button = AppButton(i, f'+', self)
+                button = AppButton(i, f'Guess Face', self)
             
             button.setFixedSize(170, 170)
 
@@ -83,7 +81,7 @@ class AppButtonsWidget(QWidget):
 
 
 
-class PhysicalRehabWidget(QWidget):
+class CognitiveRehabWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         appLabelLayout = QHBoxLayout()
@@ -109,7 +107,7 @@ class PhysicalRehabWidget(QWidget):
         )
         menuLayout.addWidget(homeButton)
         menuLayout.addStretch()
-        homeButton.clicked.connect(self.parent().deletePhysicalRehabWidget)
+        homeButton.clicked.connect(self.parent().deleteCognitiveRehabWidget)
         
         appLabelLayout.addLayout(menuLayout)
         

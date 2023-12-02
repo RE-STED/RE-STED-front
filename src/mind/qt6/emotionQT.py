@@ -15,13 +15,6 @@ class EmotionBoard(QStackedWidget):
         self.widget(1).findChild(QLabel, "ImgForGroup").hide()
         self.widget(1).findChild(QLabel, "ImgForOne").hide()
         
-        self.widget(2).findChild(QPushButton, "SadBtn_2").setFlat(False)
-        self.widget(2).findChild(QPushButton, "AngryBtn_2").setFlat(False)
-        self.widget(2).findChild(QPushButton, "HappyBtn_2").setFlat(False)
-        self.widget(2).findChild(QPushButton, "FearfulBtn_2").setFlat(False)
-        self.widget(2).findChild(QPushButton, "SurpriseBtn_2").setFlat(False)
-        self.widget(2).findChild(QPushButton, "NeutralBth_2").setFlat(False)
-        
         
         self.setBtnStyle(self.widget(0).findChild(QPushButton, "SelectCeleb"))
 

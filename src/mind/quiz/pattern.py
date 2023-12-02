@@ -71,7 +71,7 @@ class FindPatterns(PatternWindow):
     def game(self):
         btn = self.sender()
         num_answer = int(btn.text())
-        return self.check_answer(num_answer)
+        self.check_answer(num_answer)
         
         
     def add_cordinate(self):
@@ -81,7 +81,7 @@ class FindPatterns(PatternWindow):
         if btn.isFlat():
             self.cor_answer.discard((y, x))
             btn.setStyleSheet("QPushButton { background-color: white; font-size: 30pt; color: black; border-radius: 1.2em;} QPushButton:hover { font-weight: bold; }");
-
+            
 
         else:
             self.cor_answer.add((y, x))
@@ -258,7 +258,10 @@ class FindPatterns(PatternWindow):
         # print(self.coordinate[self.target_tile])
         if self.cor_answer == self.coordinate[self.target_tile] and num_answer == self.target_num:
             print("정답!")
-            return self.show_ending_message(True)
+            self.show_ending_message(True)
+            self.parent.layout.removeWidget(self)
+            self.parent.layout.setCurrentWidget(self.parent.mindMeneWidget)
+            
         else:
             # if self.cor_answer != self.coordinate[self.target_tile]:
             #     print("빠진 문자가 있는지 확인해주세요.")

@@ -192,8 +192,9 @@ class EmotionWidget(QWidget, EmotionQW):
                 
     def push_answer(self):
         btn_label = ['화남', '두려움', '행복함', '무표정', '슬픔', '놀람']
+        btn = self.sender()
         if self.mode == 'origin_person':
-            self.answer = btn_label.index(self.sender().text())
+            self.answer = btn_label.index(btn.text())
             AnswerMsg = QMessageBox()
             AnswerMsg.setIcon(QMessageBox.Icon.Information)
             if self.target == self.label[self.answer]:
@@ -209,12 +210,14 @@ class EmotionWidget(QWidget, EmotionQW):
                 AnswerMsg.exec()
         
         elif self.mode == 'group':
-            if self.sender().isFlat() == False:
-                self.sender().setFlat(True)
-                self.answer.append(btn_label.index(self.sender().text()))
+            if btn_label.index(btn.text()) not in self.answer:
+                btn.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 120); font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 35pt;}");
+                self.answer.append(btn_label.index(btn.text()))
             else:
-                self.answer.remove(btn_label.index(self.sender().text()))
-                self.sender().setFlat(False)
+                self.answer.remove(btn_label.index(btn.text()))
+                btn.setStyleSheet("QPushButton { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(0, 0, 0, 120); font-weight: bold; font-size: 35pt;}");
+                #btn.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 120); font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 35pt;}");
+
             
             
     def Check(self):
@@ -244,6 +247,8 @@ class EmotionWidget(QWidget, EmotionQW):
             self.setWindowOpacity(1 - i)
             time.sleep(0.005)
         self.close()
+        self.parent.layout.removeWidget(self)
+        self.parent.layout.setCurrentWidget(self.parent.mindMeneWidget)
         
     
         

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1418</width>
+    <height>871</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="Home">
+   <property name="geometry">
+    <rect>
+     <x>1220</x>
+     <y>30</y>
+     <width>111</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 22pt &quot;BM Dohyeon&quot;;</string>
+   </property>
+   <property name="text">
+    <string>🏠</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="PatternBtn">
+   <property name="geometry">
+    <rect>
+     <x>1190</x>
+     <y>240</y>
+     <width>161</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 22pt &quot;BM Dohyeon&quot;;</string>
+   </property>
+   <property name="text">
+    <string>패턴을 찾아라</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ODBtn">
+   <property name="geometry">
+    <rect>
+     <x>1190</x>
+     <y>400</y>
+     <width>161</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 22pt &quot;BM Dohyeon&quot;;</string>
+   </property>
+   <property name="text">
+    <string>물건을 가져와</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="EmotionBtn">
+   <property name="geometry">
+    <rect>
+     <x>1190</x>
+     <y>560</y>
+     <width>161</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 22pt &quot;BM Dohyeon&quot;;</string>
+   </property>
+   <property name="text">
+    <string>기분이 어때</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

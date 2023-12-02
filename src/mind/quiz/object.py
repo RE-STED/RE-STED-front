@@ -153,21 +153,21 @@ class ObjectQuiz(QThread):
     
     self.show_text("Kimchi~", 1)
     
-    self.countdown(3, show_window=True)
+    self.countdown(5, show_window=True)
     
     frame1 = self.show_box(1)
     
-    self.show_text("Completed Screenshot", 1)
+    self.show_text("Completed Screenshot", 2)
     
     detections = self.model.detect(frame1, "origin.jpg")
     
     categories = [detection.categories[0].category_name for detection in detections]
     
     while not len(categories):
-      self.show_text("Nothing Detected!!", 2)
+      self.show_text("Nothing Detected!!", 4)
       print("Wrong!")
       
-      self.show_text("Let's try again!", 2)
+      self.show_text("Let's try again!", 4)
       
       self.countdown(3, show_window=True)
       
@@ -179,7 +179,7 @@ class ObjectQuiz(QThread):
     
     target_obj = random.choice(categories)
     
-    self.show_text(f"Find {target_obj} in 10 seconds!", 2)
+    self.show_text(f"Find {target_obj} in 10 seconds!", 5)
 
     self.countdown(10, show_window=True)
     
@@ -189,26 +189,25 @@ class ObjectQuiz(QThread):
     detection_results = [detection.categories[0].category_name for detection in detection_results]
     
     if len(detection_results) == 0:
-      self.show_text("Nothing Detected!!", 2)
+      self.show_text("Nothing Detected!!", 3)
       print("Nothing !")
       
     else:
       detection_result = detection_results[0]
       print("\nDetect {}, Answer is {}\n".format(detection_result, target_obj))
       if detection_result == target_obj:
-        self.show_text("Correct!", 2)
+        self.show_text("Correct!", 3)
         print("Correct!")
       else:
-        self.show_text("Wrong!", 2)
+        self.show_text("Wrong!", 3)
         print("Wrong!")
       
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-    self.cap.release()
-    
-    # Qt 창 닫기
-    cv2.destroyAllWindows()
-    
+    self.parent.parent.layout.removeWidget(self.parent)
+    self.parent.parent.layout.setCurrentWidget(self.parent.parent.mindMeneWidget)
+    self.parent.close_window()
+
     
   
   def get_frame(self):
@@ -377,7 +376,7 @@ class ObjectWidget(DetectionWidget):
     def __init__(self, cam):
         super().__init__()
         
-        
+        self.resize(1920, 1080)
         self.video_size = self.video.size()
 
         self.captureThread = ObjectQuiz(cam)
@@ -386,7 +385,7 @@ class ObjectWidget(DetectionWidget):
         self.HomeButton.clicked.connect(self.close_window)
         self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
 
-        
+        self.captureThread.parent = self
 
     def update_frame(self, image):
         # Convert the QImage to QPixmap and show it on the QLabel\
@@ -400,3 +399,4 @@ class ObjectWidget(DetectionWidget):
             self.setWindowOpacity(1 - i)
             time.sleep(0.005)
         self.close()
+        

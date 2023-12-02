@@ -8,8 +8,6 @@ from PyQt6.QtCore import *
 sys.path.append('src/body')
 from thread import Thread1, Thread2
 
-# thread2 for cam
-  
 # ----------------- GUI -----------------
 
 class PoseGUI(QWidget):

@@ -110,10 +110,7 @@ class Thread2(QThread):
             else:
                 convertToQtFormat = QImage(img.data, w, h, w * ch, QImage.Format.Format_RGB888)
             scaledImage = convertToQtFormat.scaledToWidth(QApplication.primaryScreen().size().width(), Qt.TransformationMode.FastTransformation)
-            self.updateImg.emit(scaledImage, scaledImage.width(), scaledImage.height())
-            
-
-                
+            self.updateImg.emit(scaledImage, scaledImage.width(), scaledImage.height()) 
     
     def on(self):
         self.running = True

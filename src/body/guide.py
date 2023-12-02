@@ -6,11 +6,13 @@ import json
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
 
+from widget import Pose
+
 class PoseGuide():
     def __init__(self, parent=None):
         super().__init__()
         self.video_adress = 'data/video/RIGHT_SHOULDER.mp4'
-        self.json_adress = 'data/Json/right_shoulder.json'
+        self.json_adress = 'data/Json/RIGHT_SHOULDER.json'
         self.joint = 'RIGHT_SHOULDER'
         self.Pose = Pose()
         self.Cam = cv2.VideoCapture(self.video_adress)
@@ -33,13 +35,15 @@ class PoseGuide():
             self.Pose.process(img)
 
             # save joint info
-            landmarks_records.append(self.Pose.joint_pos_dict)
+            landmarks_records.append(self.Pose.convert_to_dict())
             angle_records.append(self.Pose.joint_pos_dict[self.joint].angle)
 
-        # save json
-        file = {'angle_records': angle_records, 'landmarks_records': landmarks_records}
+        data = {'angle_records': angle_records, 'landmarks_records': landmarks_records}
+        file = json.dumps(data)
+
+        # JSON 파일에 쓰기
         with open(self.json_adress, 'w') as json_file:
-            json.dump(file, json_file)
+            json_file.write(file)
 
     def loadJson(self):
         with open(self.json_adress, 'r') as json_file:
@@ -57,12 +61,27 @@ class PoseGuide():
         peaks, _ = find_peaks(self.angle_records, height=middle_angle)
         vallys, _ = find_peaks(-np.array(self.angle_records), height=-middle_angle)
 
-        # Amplitude, Period
-        self.amplitude = max_angle - min_angle
-        self.period = len(self.angle_records) / len(peaks)
-
         self.peaks = self.cluster_numbers(peaks, self.threshold)
         self.vallys = self.cluster_numbers(vallys, self.threshold)
+        
+        self.joint_info = {}
+        self.joint_info["peak"] = []
+        self.joint_info["vally"] = []
+
+        for cluster in self.peaks:
+            middle_index = cluster[int(len(cluster) / 2)]
+            self.joint_info["peak"].append({"frame": middle_index, "angle" :self.angle_records[middle_index]})
+        for cluster in self.vallys:
+            middle_index = cluster[int(len(cluster) / 2)]
+            self.joint_info["vally"].append({"frame": middle_index, "angle" :self.angle_records[middle_index]})
+
+        # Amplitude, Period
+        amplitude = self.joint_info["peak"][0]['angle'] - self.joint_info["vally"][0]['angle']
+        period = self.joint_info["peak"][1]['frame'] - self.joint_info["peak"][0]['frame']
+
+        self.joint_info["amplitude"] = amplitude
+        self.joint_info["period"] = period
+        print(self.joint_info)
 
     def plotAngle(self):
         title = str(self.json_adress.split('/')[-1].split('.')[0])    
@@ -102,7 +121,6 @@ class PoseGuide():
 
         # 마지막 군집 추가
         clusters.append(current_cluster)
-
         return clusters
 
 if __name__ == '__main__':

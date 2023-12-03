@@ -5,13 +5,12 @@ import numpy as np
 
 # ----------------- widget -----------------
 
-class Pose():
-    def __init__(self):
+class Pose(QWidget):
+    def __init__(self, parent=None):
         super().__init__()
         self.mp_pose = mp.solutions.pose
         self.mp_drawing = mp.solutions.drawing_utils
         self.pose = self.mp_pose.Pose()
-        
         self.joint_pos_dict = {}
 
     def process(self, img):

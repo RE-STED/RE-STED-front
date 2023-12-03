@@ -6,6 +6,7 @@ import cv2
 # from body.widget import Pose
 from widget import Pose
 from avatar import Avatar
+from guide import PoseGuide
 
 # ----------------- thread -----------------
 # thread1 for pose estimation
@@ -14,9 +15,13 @@ class Thread1(QThread):
     def __init__(self, cam, parent=None):
         super().__init__()
         self.running = True
+        # self.joint = self.parent().joint
+        self.joint = "RIGHT_SHOULDER"
+
         self.Cam = cam
-        self.Pose = Pose()
+        self.Pose = Pose(parent=self)
         self.Avatar = Avatar(1920, 1080, parent=self)
+        
 
     def run(self):
         # cam = Cam()
@@ -67,16 +72,22 @@ class Thread2(QThread):
     def __init__(self, parent=None):
         super().__init__()
         self.running = True
-        self.cam = cv2.VideoCapture('data/video/LEFT_SHOULDER.mp4')
+        # self.joint = self.parent().joint
+        self.joint = "RIGHT_SHOULDER"
+
+        self.Cam = cv2.VideoCapture(f'data/video/{self.joint}.mp4')
         self.Pose = Pose()
         self.Avatar = Avatar(1920, 1080, parent=self)
+        self.Guide = PoseGuide(parent=self)
+        # self.Guide.process()
+        # self.angle_records, self.landmarks_records, self.length = self.Guide.load_json(self.Guide.guide_adress)
     
     def run(self):
         while self.running:
-            ret, frame = self.cam.read()
+            ret, frame = self.Cam.read()
             # 끝나면 바로 처음 영상으로 돌아가기
             if not ret:
-                self.cam.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                self.Cam.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 continue
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 

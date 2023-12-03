@@ -5,29 +5,35 @@ import numpy as np
 import json
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
+import math
+from PyQt6.QtWidgets import QWidget
 
 from widget import Pose
 from avatar import Avatar
 
-class PoseGuide():
+class PoseGuide(QWidget):
     def __init__(self, parent=None):
         super().__init__()
-        self.video_adress = 'data/video/RIGHT_SHOULDER.mp4'
-        self.json_adress = 'data/Json/RIGHT_SHOULDER/C10L10.json'
-        self.guide_adress = 'data/Json/RIGHT_SHOULDER/C10L7.json'
-        self.joint = 'RIGHT_SHOULDER'
+        # self.joint = self.parent().joint
+        self.joint = "RIGHT_SHOULDER"
+        self.video_adress = f'data/video/{self.joint}.mp4'
+        self.json_adress = f'data/Json/{self.joint}/C10L10.json'
         self.Pose = Pose()
         self.Avatar = Avatar(1920, 1080)
+
+        self.challenge = 10
+        self.level = 3
+        self.guide_adress = f'data/Json/{self.joint}/C{self.challenge}L{self.level}.json'
 
         self.threshold = 15
 
     def process(self):
-        # self.saveVideo(self.video_adress)
-        self.loadJson(self.json_adress)
+        self.saveVideo(self.video_adress)
+        self.angle_records, self.landmarks_records, self.length = self.loadJson(self.json_adress)
         self.featureExtraction()
         # self.plotAngle()
-        self.makeGuide(self.joint, challenge=10, level=3)
-        self.playGuide(self.guide_adress)
+        self.makeGuide(self.joint, challenge=self.challenge, level=self.level)
+        # self.playGuide(self.guide_adress)
 
     # ------------------- json -------------------
     def saveJson(self, data, json_adress):
@@ -40,9 +46,10 @@ class PoseGuide():
     def loadJson(self, json_adress):
         with open(json_adress, 'r') as json_file:
             file = json.load(json_file)
-            self.angle_records = file['angle_records']
-            self.landmarks_records = file['landmarks_records']
-            self.length = len(self.angle_records)
+            angle_records = file['angle_records']
+            landmarks_records = file['landmarks_records']
+            length = len(self.angle_records)
+        return angle_records, landmarks_records, length
 
     def saveVideo(self, video_adress):
         Cam = cv2.VideoCapture(video_adress)
@@ -72,7 +79,7 @@ class PoseGuide():
             length = len(angle_records)
             for i in range(length):
                 landmarks_records[i] = self.convert_to_Joint(landmarks_records[i])
-                img = self.Avatar.process(landmarks_records[i])
+                img = self.Avatar.process(landmarks_records[i], joint=self.joint)
                 cv2.imshow('img', img)
                 cv2.waitKey(30)
     
@@ -112,7 +119,7 @@ class PoseGuide():
 
         self.joint_info["amplitude"] = amplitude
         self.joint_info["period"] = period
-        print(self.joint_info)
+        # print(self.joint_info)
     
     def cluster_numbers(self, numbers, threshold):
         clusters = []
@@ -132,16 +139,23 @@ class PoseGuide():
         return clusters
     
     # ------------------- Inverse Kinematics -------------------
-    def inverse_kinematics(self, A, B, theta):
-        # A와 B 사이의 거리 계산
-        AB_distance = np.linalg.norm(B - A) 
+    def inverse_kinematics(self, A, B, angle_BC, length_BC):
+        # B에서 A로 향하는 벡터
+        BA_vector = [(A[0] - B[0]), (A[1] - B[1])]
+
+        # BC 벡터의 각도 계산
+        angle_BA = math.atan2(BA_vector[1], BA_vector[0])
+        
+        # BC 벡터의 새로운 각도 계산
+        angle_BC_rad = math.radians(angle_BC)
+        angle_AC = angle_BA + angle_BC_rad
 
         # C의 좌표 계산
-        C = A + AB_distance * np.array([np.cos(theta), np.sin(theta)])
+        C = np.array([B[0] + length_BC * math.cos(angle_AC), B[1] + length_BC * math.sin(angle_AC)])
 
         return C
 
-    def makeGuide(self, joint_name="RIGHT_SHOULDER", challenge=10, level=2):
+    def makeGuide(self, joint_name, challenge=10, level=2):
         # challenge: 운동 단계 수
         # level: 운동 강도
         saveAngle = []
@@ -176,6 +190,9 @@ class PoseGuide():
         start_angle = angle_records[before]
 
         coin = 0
+        saved_C = {"x": [], "y": []}
+        saved_A = {"x": [], "y": []}
+        saved_B = {"x": [], "y": []}
 
         while(p_idx < len(peak) or v_idx < len(vally)):
             if p_idx >= len(peak) and v_idx >= len(vally):
@@ -201,38 +218,66 @@ class PoseGuide():
                 end_angle = angle_records[after]
             
             gap = (end_angle - start_angle) / (after - before)
-            print(f"{before} -> {after}")
+            # print(f"{before} -> {after}")
 
-            
             for i in range(before, after):
                 angle_records[i] = start_angle + gap * (i - before)
                 saveAngle.append(angle_records[i])
                 landmarks_records[i][joint_name]['angle'] = angle_records[i]
-                # print(angle_records[i])
 
                 joint_A = connected_joints[joint_name][0]
                 joint_B = connected_joints[joint_name][1]
+                joint_C = connected_joints[joint_name][2]
+                joint_D = joint_C
+                if len(connected_joints[joint_name]) >= 4:
+                    joint_D = connected_joints[joint_name][3]
 
                 A = np.array([landmarks_records[i][joint_A]['x'], landmarks_records[i][joint_A]['y']])
                 B = np.array([landmarks_records[i][joint_B]['x'], landmarks_records[i][joint_B]['y']])
+                C = np.array([landmarks_records[i][joint_C]['x'], landmarks_records[i][joint_C]['y']])
+                D = np.array([landmarks_records[i][joint_D]['x'], landmarks_records[i][joint_D]['y']])
 
-                # print(A, B, angle_records[i])
-                C = self.inverse_kinematics(A, B, angle_records[i])
-                # print(C)
+                CB_length = np.linalg.norm(C - B)
+                C_est = self.inverse_kinematics(A, B, angle_records[i], 0.15) + C * 0.02 - D * 0.03
+                D_est = self.inverse_kinematics(A, B, angle_records[i], 0.3)
+            
+                landmarks_records[i][joint_C]['x'] = C_est[0]
+                landmarks_records[i][joint_C]['y'] = C_est[1]
 
-                landmarks_records[i][joint_name]['x'] = C[0]
-                landmarks_records[i][joint_name]['y'] = C[1]
+                landmarks_records[i][joint_D]['x'] = D_est[0]
+                landmarks_records[i][joint_D]['y'] = D_est[1]
+
+                # --------- print ---------
+                saved_C['x'].append(C_est[0])
+                saved_C['y'].append(C_est[1])
+                saved_A['x'].append(A[0])
+                saved_A['y'].append(A[1])
+                saved_B['x'].append(B[0])
+                saved_B['y'].append(B[1])
+
+
+                # ---------------------------
+
             before = after
             start_angle = end_angle
             coin += 1
-            # print(saveAngle)
+        # --------- plot ---------
         # plt.plot(saveAngle)
+        # plt.plot(saved_A['x'])
+        # plt.plot(saved_A['y'])
+        # plt.plot(saved_B['x'])
+        # plt.plot(saved_B['y'])
+        # plt.plot(saved_C['x'])
+        # plt.plot(saved_C['y'])
+        # plt.legend(['A_x', 'A_y', 'B_x', 'B_y', 'C_x', 'C_y'])
+
+
         # plt.show()
+        # --------- save Json -----------
 
         data = {'angle_records': angle_records, 'landmarks_records': landmarks_records, 'challenge': challenge, 'level': level_, 'joint': joint_name}
         json_adress = f'data/Json/{joint_name}/C{challenge}L{level_}.json'
         self.saveJson(data, json_adress)
-
     
     # ------------------- plot -------------------
     def plotAngle(self):
@@ -264,7 +309,7 @@ class JointDict:
         self.y = landmark['y']
         self.z = landmark['z']
         self.v = landmark['v']
-        self.angle = 0
+        self.angle = landmark['angle']
 
 connected_joints = {
     "LEFT_KNEE": ["LEFT_HIP", "LEFT_KNEE", "LEFT_ANKLE"],
@@ -277,9 +322,12 @@ connected_joints = {
     "RIGHT_HIP": ["RIGHT_SHOULDER", "RIGHT_HIP", "RIGHT_KNEE"],
     "RIGHT_ANKLE": ["RIGHT_KNEE", "RIGHT_ANKLE", "RIGHT_FOOT_INDEX"],
     "RIGHT_ELBOW": ["RIGHT_SHOULDER", "RIGHT_ELBOW", "RIGHT_WRIST"],
-    "RIGHT_SHOULDER": ["RIGHT_HIP", "RIGHT_SHOULDER", "RIGHT_ELBOW"],
+    "RIGHT_SHOULDER": ["RIGHT_HIP", "RIGHT_SHOULDER", "RIGHT_ELBOW", "RIGHT_WRIST"],
     "RIGHT_WRIST": ["RIGHT_ELBOW", "RIGHT_WRIST", "RIGHT_INDEX"],
 }
+
+length_dict = {"shoulder": 0.15, "elbow": 0.15, "wrist": 0.1, "hip": 0.2, "knee": 0.2, "ankle": 0.1}
+length = 0.2
 
 if __name__ == '__main__':
     guide = PoseGuide()

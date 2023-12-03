@@ -17,6 +17,7 @@ class PoseGUI(QWidget):
         # cam
         self.background = QLabel(self)
         self.Cam = cam
+        self.joint = "RIGHT_SHOULDER"
 
         # thread
         self.thread1 = Thread1(cam=self.Cam, parent=self)

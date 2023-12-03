@@ -46,11 +46,13 @@ class Avatar(QWidget):
     def draw_angle(self, img, joint_pos_dict, joint):
         if joint is None:
             return img
+        img = cv2.flip(img, 1)
         print(joint_pos_dict[joint].angle)
         # putText -> text font size = 
         cv2.putText(img, "{}".format(int(joint_pos_dict[joint].angle)),
                     (int(self.w * 0.1), int(self.height * 0.2)),
                     cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 3, cv2.LINE_AA)
+        img = cv2.flip(img, 1)
         return img
 
 

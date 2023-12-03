@@ -28,7 +28,7 @@ class PoseGuide(QWidget):
         self.threshold = 15
 
     def process(self):
-        self.saveVideo(self.video_adress)
+        # self.saveVideo(self.video_adress)
         self.angle_records, self.landmarks_records, self.length = self.loadJson(self.json_adress)
         self.featureExtraction()
         # self.plotAngle()
@@ -48,7 +48,7 @@ class PoseGuide(QWidget):
             file = json.load(json_file)
             angle_records = file['angle_records']
             landmarks_records = file['landmarks_records']
-            length = len(self.angle_records)
+            length = len(angle_records)
         return angle_records, landmarks_records, length
 
     def saveVideo(self, video_adress):

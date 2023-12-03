@@ -63,8 +63,15 @@ class Pose():
 
         if angle > 180.0:
             angle = 360 - angle
+        # angle = radians * 180.0 / np.pi
 
         return angle
+    
+    def extract_angle(self, joint):
+        a = [self.joint_pos_dict[joint[0]].x, self.joint_pos_dict[joint[0]].y]
+        b = [self.joint_pos_dict[joint[1]].x, self.joint_pos_dict[joint[1]].y]
+        c = [self.joint_pos_dict[joint[2]].x, self.joint_pos_dict[joint[2]].y]
+        return self.calculate_angle(a, b, c)
     
     def convert_to_dict(self):
         landmarks = {}
@@ -77,12 +84,6 @@ class Pose():
                 "angle": self.joint_pos_dict[jnt_name].angle,
             }
         return landmarks
-    
-    def extract_angle(self, joint):
-        a = [self.joint_pos_dict[joint[0]].x, self.joint_pos_dict[joint[0]].y]
-        b = [self.joint_pos_dict[joint[1]].x, self.joint_pos_dict[joint[1]].y]
-        c = [self.joint_pos_dict[joint[2]].x, self.joint_pos_dict[joint[2]].y]
-        return self.calculate_angle(a, b, c)
 
 class Joint:
     def __init__(self, landmark):

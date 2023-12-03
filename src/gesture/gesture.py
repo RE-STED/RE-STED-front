@@ -3,7 +3,7 @@ sys.path.append('src')
 
 from cam import Cam
 
-from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QGraphicsOpacityEffect
+from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication
 from PyQt6.QtCore import QThread, Qt, pyqtSignal
 import mediapipe as mp
@@ -72,15 +72,20 @@ class GestureWidget(QWidget):
 
     def moveCursor(self, result, output_image, timestamp_ms):
         if result.hand_landmarks:
+            if hasattr(self, 'image_height'):
             # point is relative to the image size + widget absolute position
-            x = statistics.mean([result.hand_landmarks[0][0].x * self.image_height, 
-                                 result.hand_landmarks[0][3].x * self.image_height, 
-                                 result.hand_landmarks[0][9].x * self.image_height, 
-                                 result.hand_landmarks[0][17].x * self.image_height]) + self.screen_geometry.x() + self.mapToGlobal(self.video_label.pos()).x()
-            y = statistics.mean([result.hand_landmarks[0][0].y * self.image_width,
-                                 result.hand_landmarks[0][9].y * self.image_width, 
-                                 result.hand_landmarks[0][3].y * self.image_width, 
-                                 result.hand_landmarks[0][17].y * self.image_width]) + self.screen_geometry.y() + self.mapToGlobal(self.video_label.pos()).y()
+                x = statistics.mean([result.hand_landmarks[0][0].x * self.image_height, 
+                                    result.hand_landmarks[0][3].x * self.image_height, 
+                                    result.hand_landmarks[0][9].x * self.image_height, 
+                                    result.hand_landmarks[0][17].x * self.image_height]) + self.screen_geometry.x() + self.mapToGlobal(self.video_label.pos()).x()
+                y = statistics.mean([result.hand_landmarks[0][0].y * self.image_width,
+                                    result.hand_landmarks[0][9].y * self.image_width, 
+                                    result.hand_landmarks[0][3].y * self.image_width, 
+                                    result.hand_landmarks[0][17].y * self.image_width]) + self.screen_geometry.y() + self.mapToGlobal(self.video_label.pos()).y()
+            
+            else:
+                #set x, y to the current cursor position
+                x, y = QCursor.pos().x(), QCursor.pos().y()
             #print(self.image_height, self.image_width)
             #print(self.screen_geometry.x(), self.screen_geometry.y())
             #print(self.mapToGlobal(self.video_label.pos()).x(), self.mapToGlobal(self.video_label.pos()).y())

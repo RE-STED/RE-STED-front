@@ -20,11 +20,14 @@ class MainWindow(QMainWindow):
         self.setStyleSheet("background-color: black;")  # Set background color to black
         
         self.handTrackWidget = GestureWidget(self, self.cam)
+        
+        # Mind Quiz-------------------------------
         self.mindMeneWidget = MenuWidget()
         
         self.mindMeneWidget.PatternBtn.clicked.connect(self.pattern)
         self.mindMeneWidget.EmotionBtn.clicked.connect(self.emotion)
         self.mindMeneWidget.ODBtn.clicked.connect(self.object)
+        # ----------------------------------------
         
         # Create a stacked layout and add the widgets
         self.layout = QStackedLayout()

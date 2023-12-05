@@ -96,7 +96,7 @@ class AppButton(QPushButton):
 
 
 
-class AppButtons(QWidget):
+class AppButtonsWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -105,7 +105,7 @@ class AppButtons(QWidget):
 
         self.buttons = []
 
-        for i in range(2):  # For example, create 3 labels
+        for i in range(2):  # For example, create 2 labels
             if(i == 0):
                 button = AppButton(i, f'신체 재활', self)
             elif(i == 1):
@@ -144,13 +144,13 @@ class AppWidget(QWidget):
         appLabelLayout.addWidget(self.btn)
         self.btn.clicked.connect(lambda: self.showAppLabel(self.appLabel))
 
-        self.appLabel = AppButtons(self)
+        self.appLabel = AppButtonsWidget(self)
         appLabelLayout.addWidget(self.appLabel)
 
         # Create a widget for the appLabel layout
-        self.appLabelWidget = QWidget(self)
-        self.appLabelWidget.setLayout(appLabelLayout)
-        self.appLabelWidget.setStyleSheet("background-color: transparent;")
+        # self.appLabelWidget = QWidget(self)
+        self.setLayout(appLabelLayout)
+        self.setStyleSheet("background-color: transparent;")
 
         self.appLabel.hide()
 

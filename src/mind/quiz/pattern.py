@@ -259,8 +259,8 @@ class FindPatterns(PatternWindow):
         if self.cor_answer == self.coordinate[self.target_tile] and num_answer == self.target_num:
             print("정답!")
             self.show_ending_message(True)
+            self.parent.btnWidget.show()
             self.parent.layout.removeWidget(self)
-            self.parent.layout.setCurrentWidget(self.parent.mindMeneWidget)
             
         else:
             # if self.cor_answer != self.coordinate[self.target_tile]:

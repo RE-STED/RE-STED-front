@@ -161,9 +161,15 @@ cython_debug/
 #.idea/
 
 
+<<<<<<< HEAD
 # Restore Mind
 
 src/mind/Gallery/celeb/
 src/mind/Gallery/family/
 
+=======
+>>>>>>> main
 src/mind/model/
+
+
+.vscode/

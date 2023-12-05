@@ -204,8 +204,8 @@ class ObjectQuiz(QThread):
       
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    self.parent.parent.btnWidget.show()
     self.parent.parent.layout.removeWidget(self.parent)
-    self.parent.parent.layout.setCurrentWidget(self.parent.parent.mindMeneWidget)
     self.parent.close_window()
 
     

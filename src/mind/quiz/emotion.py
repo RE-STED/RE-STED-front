@@ -254,9 +254,10 @@ class EmotionWidget(QWidget, EmotionQW):
             i = i / 100
             self.setWindowOpacity(1 - i)
             time.sleep(0.005)
-        self.close()
+        
+        self.parent.btnWidget.show()
         self.parent.layout.removeWidget(self)
-        self.parent.layout.setCurrentWidget(self.parent.mindMeneWidget)
+        self.close()
         
     
         

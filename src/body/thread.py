@@ -15,9 +15,10 @@ class Thread1(QThread):
     updateImg = pyqtSignal(QImage, int, int)
     def __init__(self, cam, parent=None):
         super().__init__()
+        self.parent = parent
         self.running = True
-        # self.joint = self.parent().joint
-        self.joint = "RIGHT_SHOULDER"
+        # self.joint_name = self.parent.joint_name
+        self.joint_name = "RIGHT_SHOULDER"
 
         self.Cam = cam
         self.Pose = Pose(parent=self)
@@ -34,7 +35,7 @@ class Thread1(QThread):
             # ------ pose estimation ------
             try:
                 self.Pose.process(img)
-                img = self.Avatar.process(self.Pose.joint_pos_dict)
+                img = self.Avatar.process(self.Pose.joint_pos_dict, joint_name=self.joint_name)
                 img = cv2.flip(img, 1)
                 h, w, _ = img.shape
                 if w <= 0 or h <= 0:
@@ -72,24 +73,62 @@ class Thread2(QThread):
     updateImg = pyqtSignal(QImage, int, int)
     def __init__(self, parent=None):
         super().__init__()
+        self.parent = parent
         self.running = True
-        # self.joint = self.parent().joint
-        self.joint = "RIGHT_SHOULDER"
+        # self.joint_name = self.parent.joint_name
+        self.joint_name = "RIGHT_SHOULDER"
 
-        self.Cam = cv2.VideoCapture(f'data/video/{self.joint}.mp4')
+        # --------- thread1 ------------
+        self.thread1 = self.parent.thread1
+        self.Pose = self.thread1.Pose
+        self.joint_pos_dict = self.Pose.joint_pos_dict
+        # ------------------------------
+
+        self.Cam = cv2.VideoCapture(f'data/video/{self.joint_name}.mp4')
         self.Pose = Pose()
         self.Avatar = Avatar(1920, 1080, parent=self)
         self.Guide = PoseGuide(parent=self)
         self.Guide.process()
+        self.count = 0
 
     def run(self):
         while self.running:
-            self.angle_records, self.landmarks_records, self.length = self.Guide.loadJson(self.Guide.guide_adress)
-            for i in range(self.length):
-                if self.running:
+            file = self.Guide.loadJson(self.Guide.guide_adress)
+            angle_records = file['angle_records']
+            landmarks_records = file['landmarks_records']
+            length = len(angle_records)
+            peak = file['peak']
+            vally = file['vally']
+            joint_name = file['joint_name']
+
+            p_idx = 0
+            v_idx = 0
+
+            for i in range(length):
+                if not self.running:
+                    print('thread2 break')
                     break
-                landmarks = self.Guide.convert_to_Joint(self.landmarks_records[i])
-                img = self.Avatar.process(landmarks, joint=self.joint)
+                if p_idx >= len(peak):
+                    continue
+                if v_idx >= len(vally):
+                    continue
+                elif i == peak[p_idx]['frame']:
+                    while self.joint_pos_dict[joint_name].angle < peak[p_idx]['angle']:
+                        time.sleep(1/30)
+                        print('peak wait')
+                    p_idx += 1
+                    self.count += 1
+                    print(self.count)
+
+                elif i == vally[v_idx]:
+                    print(vally[v_idx]['angle'])
+                    while self.joint_pos_dict[joint_name].angle > vally[v_idx]['angle']:
+                        time.sleep(1/30)
+                        print('vally wait')
+                    v_idx += 1
+
+                landmarks = self.Guide.convert_to_Joint(landmarks_records[i])
+                img = self.Avatar.process(landmarks, joint_name=joint_name)
                 img = cv2.flip(img, 1)
                 img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
                 h, w, _ = img.shape
@@ -107,50 +146,10 @@ class Thread2(QThread):
                     convertToQtFormat = QImage(img.data, w, h, w * ch, QImage.Format.Format_RGB888)
                 scaledImage = convertToQtFormat.scaledToWidth(QApplication.primaryScreen().size().width(), Qt.TransformationMode.FastTransformation)
                 self.updateImg.emit(scaledImage, scaledImage.width(), scaledImage.height()) 
-            
-    # def run(self):
-    #     while self.running:
-    #         ret, frame = self.Cam.read()
-    #         # 끝나면 바로 처음 영상으로 돌아가기
-    #         if not ret:
-    #             self.Cam.set(cv2.CAP_PROP_POS_FRAMES, 0)
-    #             continue
-    #         img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-            
-
-    #         # ------ pose estimation ------
-    #         try:
-    #             self.Pose.process(img)
-    #             img = self.Avatar.process(self.Pose.joint_pos_dict)
-    #             img = cv2.flip(img, 1)
-    #             h, w, _ = img.shape
-    #             if w <= 0 or h <= 0:
-    #                 raise Exception
-    #         except:
-    #             print('no pose')
-    #             # init camera pose
-    #             img = self.Cam.capture() 
-    #             h, w, _ = img.shape
-    #             # writing on image in the center red color bigger than cv2.LineAA
-    #             cv2.putText(img, '...', (int(w/2), int(h/2)), cv2.FONT_HERSHEY_SIMPLEX, 5, (0, 0, 255), 5, cv2.LINE_AA)
-
-            
-    #         # ------ send img to gui ------
-    #         print(img.shape)
-    #         h, w, ch = img.shape
-    #         bytesPerLine = ch * w
-            
-
-    #         if ch == 1:
-    #             convertToQtFormat = QImage(img.data, w, h, bytesPerLine, QImage.Format.Format_Grayscale8)
-    #         else:
-    #             convertToQtFormat = QImage(img.data, w, h, w * ch, QImage.Format.Format_RGB888)
-    #         scaledImage = convertToQtFormat.scaledToWidth(QApplication.primaryScreen().size().width(), Qt.TransformationMode.FastTransformation)
-    #         self.updateImg.emit(scaledImage, scaledImage.width(), scaledImage.height()) 
-
+    
     def on(self):
         self.running = True
+        self.count = 0
     
     def off(self):
         self.running = False

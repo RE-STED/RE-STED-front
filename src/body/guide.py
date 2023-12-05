@@ -14,25 +14,29 @@ from avatar import Avatar
 class PoseGuide(QWidget):
     def __init__(self, parent=None):
         super().__init__()
-        # self.joint = self.parent().joint
-        self.joint = "RIGHT_SHOULDER"
-        self.video_adress = f'data/video/{self.joint}.mp4'
-        self.json_adress = f'data/Json/{self.joint}/C10L10.json'
+        self.parent = parent
+        # self.joint_name = self.parent.joint_name
+        self.joint_name = "RIGHT_SHOULDER"
+        self.video_adress = f'data/video/{self.joint_name}.mp4'
+        self.json_adress = f'data/Json/{self.joint_name}/C10L10.json'
         self.Pose = Pose()
         self.Avatar = Avatar(1920, 1080)
 
         self.challenge = 10
         self.level = 3
-        self.guide_adress = f'data/Json/{self.joint}/C{self.challenge}L{self.level}.json'
+        self.guide_adress = f'data/Json/{self.joint_name}/C{self.challenge}L{self.level}.json'
 
         self.threshold = 15
 
     def process(self):
         # self.saveVideo(self.video_adress)
-        self.angle_records, self.landmarks_records, self.length = self.loadJson(self.json_adress)
-        self.featureExtraction()
+        file = self.loadJson(self.json_adress)
+        self.angle_records = file['angle_records']
+        self.landmarks_records = file['landmarks_records']
+        self.length = len(self.angle_records)
+        self.featureExtraction(self.angle_records)
         # self.plotAngle()
-        self.makeGuide(self.joint, challenge=self.challenge, level=self.level)
+        self.makeGuide(self.joint_name, challenge=self.challenge, level=self.level)
         # self.playGuide(self.guide_adress)
 
     # ------------------- json -------------------
@@ -46,10 +50,7 @@ class PoseGuide(QWidget):
     def loadJson(self, json_adress):
         with open(json_adress, 'r') as json_file:
             file = json.load(json_file)
-            angle_records = file['angle_records']
-            landmarks_records = file['landmarks_records']
-            length = len(angle_records)
-        return angle_records, landmarks_records, length
+        return file
 
     def saveVideo(self, video_adress):
         Cam = cv2.VideoCapture(video_adress)
@@ -65,9 +66,9 @@ class PoseGuide(QWidget):
 
             # save joint info
             landmarks_records.append(self.Pose.convert_to_dict())
-            angle_records.append(self.Pose.joint_pos_dict[self.joint].angle)
+            angle_records.append(self.Pose.joint_pos_dict[self.joint_name].angle)
         Cam.release()
-        data = {'angle_records': angle_records, 'landmarks_records': landmarks_records, 'challenge': 10, 'level': 10, 'joint': joint_name}
+        data = {'angle_records': angle_records, 'landmarks_records': landmarks_records, 'challenge': 10, 'level': 10, 'joint_name': joint_name}
         json_adress = f'data/Json/{joint_name}/C10L10.json'
         self.saveJson(data, json_adress)
 
@@ -79,7 +80,7 @@ class PoseGuide(QWidget):
             length = len(angle_records)
             for i in range(length):
                 landmarks_records[i] = self.convert_to_Joint(landmarks_records[i])
-                img = self.Avatar.process(landmarks_records[i], joint=self.joint)
+                img = self.Avatar.process(landmarks_records[i], joint_name=self.joint_name)
                 cv2.imshow('img', img)
                 cv2.waitKey(30)
     
@@ -90,14 +91,14 @@ class PoseGuide(QWidget):
         return joint_pos_dict
         
     # ------------------- feature extraction -------------------
-    def featureExtraction(self):
-        max_angle = max(self.angle_records)
-        min_angle = min(self.angle_records)
+    def featureExtraction(self, angle_records):
+        max_angle = max(angle_records)
+        min_angle = min(angle_records)
         middle_angle = (max_angle + min_angle) / 2
 
         # peaks, vallys
-        peaks, _ = find_peaks(self.angle_records, height=middle_angle)
-        vallys, _ = find_peaks(-np.array(self.angle_records), height=-middle_angle)
+        peaks, _ = find_peaks(angle_records, height=middle_angle)
+        vallys, _ = find_peaks((-np.array(angle_records)).tolist(), height=-middle_angle)
 
         self.peaks = self.cluster_numbers(peaks, self.threshold)
         self.vallys = self.cluster_numbers(vallys, self.threshold)
@@ -108,10 +109,10 @@ class PoseGuide(QWidget):
 
         for cluster in self.peaks:
             middle_index = cluster[int(len(cluster) / 2)]
-            self.joint_info["peak"].append({"frame": middle_index, "angle" :self.angle_records[middle_index]})
+            self.joint_info["peak"].append({"frame": int(middle_index), "angle" :float(angle_records[middle_index])})
         for cluster in self.vallys:
             middle_index = cluster[int(len(cluster) / 2)]
-            self.joint_info["vally"].append({"frame": middle_index, "angle" :self.angle_records[middle_index]})
+            self.joint_info["vally"].append({"frame": int(middle_index), "angle" :float(angle_records[middle_index])})
 
         # Amplitude, Period
         amplitude = self.joint_info["peak"][0]['angle'] - self.joint_info["vally"][0]['angle']
@@ -174,8 +175,7 @@ class PoseGuide(QWidget):
 
         peak = self.joint_info['peak']
         vally = self.joint_info['vally']
-        # print(peak)
-        # print(vally)
+        coin = 0
 
         # ----- parameter -----
 
@@ -188,11 +188,6 @@ class PoseGuide(QWidget):
             v_idx += 1
 
         start_angle = angle_records[before]
-
-        coin = 0
-        saved_C = {"x": [], "y": []}
-        saved_A = {"x": [], "y": []}
-        saved_B = {"x": [], "y": []}
 
         while(p_idx < len(peak) or v_idx < len(vally)):
             if p_idx >= len(peak) and v_idx >= len(vally):
@@ -237,7 +232,7 @@ class PoseGuide(QWidget):
                 C = np.array([landmarks_records[i][joint_C]['x'], landmarks_records[i][joint_C]['y']])
                 D = np.array([landmarks_records[i][joint_D]['x'], landmarks_records[i][joint_D]['y']])
 
-                CB_length = np.linalg.norm(C - B)
+                # CB_length = np.linalg.norm(C - B)
                 C_est = self.inverse_kinematics(A, B, angle_records[i], 0.15) + C * 0.02 - D * 0.03
                 D_est = self.inverse_kinematics(A, B, angle_records[i], 0.3)
             
@@ -247,35 +242,25 @@ class PoseGuide(QWidget):
                 landmarks_records[i][joint_D]['x'] = D_est[0]
                 landmarks_records[i][joint_D]['y'] = D_est[1]
 
-                # --------- print ---------
-                saved_C['x'].append(C_est[0])
-                saved_C['y'].append(C_est[1])
-                saved_A['x'].append(A[0])
-                saved_A['y'].append(A[1])
-                saved_B['x'].append(B[0])
-                saved_B['y'].append(B[1])
-
-
-                # ---------------------------
-
             before = after
             start_angle = end_angle
             coin += 1
-        # --------- plot ---------
-        # plt.plot(saveAngle)
-        # plt.plot(saved_A['x'])
-        # plt.plot(saved_A['y'])
-        # plt.plot(saved_B['x'])
-        # plt.plot(saved_B['y'])
-        # plt.plot(saved_C['x'])
-        # plt.plot(saved_C['y'])
-        # plt.legend(['A_x', 'A_y', 'B_x', 'B_y', 'C_x', 'C_y'])
+        # --------- save peak, vally -----------
+        for i in range(len(peak)):
+            peak[i]['angle'] = angle_records[peak[i]['frame']]
+        for i in range(len(vally)):
+            vally[i]['angle'] = angle_records[vally[i]['frame']]
 
-
-        # plt.show()
         # --------- save Json -----------
-
-        data = {'angle_records': angle_records, 'landmarks_records': landmarks_records, 'challenge': challenge, 'level': level_, 'joint': joint_name}
+        data = {
+            'angle_records': angle_records, 
+            'landmarks_records': landmarks_records, 
+            'challenge': challenge, 
+            'level': level_, 
+            'joint_name': joint_name,
+            'peak': peak,
+            'vally': vally,
+            }
         json_adress = f'data/Json/{joint_name}/C{challenge}L{level_}.json'
         self.saveJson(data, json_adress)
     

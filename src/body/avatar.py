@@ -4,23 +4,25 @@ from PyQt6.QtWidgets import QWidget
 
 class Avatar(QWidget):
     def __init__(self, width, height, parent=None):
+        super().__init__()
+        self.parent = parent
         self.width = width
         self.height = height
-        # self.joint = self.parent().joint
-        self.joint = "RIGHT_SHOULDER"
+        # self.joint_name = self.parent.joint_name
+        self.joint_name = "RIGHT_SHOULDER"
     
-    def process(self, joint_pos_dict, joint=None):
+    def process(self, joint_pos_dict, joint_name=None):
         # 1. extract center
         self.center = self.extract_center(joint_pos_dict)
         # 2. draw avatar img
-        img = self.drawimg(joint_pos_dict, joint=joint)
+        img = self.drawimg(joint_pos_dict, joint_name)
         # 3. crop center
         img = self.cropCenter(img)
         # 4. put angle
-        img = self.draw_angle(img, joint_pos_dict, joint=joint)
+        img = self.draw_angle(img, joint_pos_dict, joint_name)
         return img
     
-    def drawimg(self, joint_pos_dict, joint=None):
+    def drawimg(self, joint_pos_dict, joint_name=None):
         img = np.zeros((self.height, self.width, 3), np.uint8) + 255 #배경 흰색
 
         for parts in connect_point:
@@ -31,25 +33,25 @@ class Avatar(QWidget):
                                int(joint_pos_dict[p].y * self.height)), 
                                (int(joint_pos_dict[q].x * self.width), 
                                 int(joint_pos_dict[q].y * self.height)), (0, 0, 0), 5)
-        if joint is not None:
-            for i in range(len(connect_joint[joint])):
-                if i == len(connect_joint[joint])-1:
+        if joint_name is not None:
+            for i in range(len(connect_joint[joint_name])):
+                if i == len(connect_joint[joint_name])-1:
                     break
-                A = info_dict[connect_joint[joint][i]]
-                B = info_dict[connect_joint[joint][i+1]]
+                A = info_dict[connect_joint[joint_name][i]]
+                B = info_dict[connect_joint[joint_name][i+1]]
                 cv2.line(img, (int(joint_pos_dict[A].x * self.width), 
                                int(joint_pos_dict[A].y * self.height)), 
                                (int(joint_pos_dict[B].x * self.width), 
                                 int(joint_pos_dict[B].y * self.height)), (0, 0, 255), 5)
         return img
 
-    def draw_angle(self, img, joint_pos_dict, joint):
-        if joint is None:
+    def draw_angle(self, img, joint_pos_dict, joint_name=None):
+        if joint_name is None:
             return img
         img = cv2.flip(img, 1)
-        print(joint_pos_dict[joint].angle)
+        print(joint_pos_dict[joint_name].angle)
         # putText -> text font size = 
-        cv2.putText(img, "{}".format(int(joint_pos_dict[joint].angle)),
+        cv2.putText(img, "{}".format(int(joint_pos_dict[joint_name].angle)),
                     (int(self.w * 0.1), int(self.height * 0.2)),
                     cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 3, cv2.LINE_AA)
         img = cv2.flip(img, 1)

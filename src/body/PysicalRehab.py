@@ -14,14 +14,16 @@ class PoseGUI(QWidget):
 
     def __init__(self, parent=None, cam=None):
         super().__init__()
+        self.parent = parent
         # cam
         self.background = QLabel(self)
         self.Cam = cam
-        self.joint = "RIGHT_SHOULDER"
+        # self.joint_name = self.parent.joint_name
+        self.joint_name = "RIGHT_SHOULDER"
 
         # thread
         self.thread1 = Thread1(cam=self.Cam, parent=self)
-        self.thread2 = Thread2()
+        self.thread2 = Thread2(parent=self)
         # self.thread1 = Thread2()
 
         # button

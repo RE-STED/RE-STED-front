@@ -13,15 +13,13 @@ from widget import Pose
 from avatar import Avatar
 
 class PoseGuide(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, joint_name=None):
         super().__init__()
-        self.parent = parent
-        # self.joint_name = self.parent.joint_name
-        self.joint_name = "RIGHT_SHOULDER"
+        self.joint_name = joint_name
         self.video_adress = f'data/video/{self.joint_name}.mp4'
         self.json_adress = f'data/Json/{self.joint_name}/C10L10.json'
         self.Pose = Pose()
-        self.Avatar = Avatar(1920, 1080)
+        self.Avatar = Avatar(1920, 1080, joint_name=self.joint_name)
 
         self.challenge = 10
         self.level = 3

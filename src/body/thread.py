@@ -13,16 +13,15 @@ import time
 # thread1 for pose estimation
 class Thread1(QThread):
     updateImg = pyqtSignal(QImage, int, int)
-    def __init__(self, cam, parent=None):
+    def __init__(self, cam, parent=None, joint_name=None):
         super().__init__()
         self.parent = parent
         self.running = True
-        # self.joint_name = self.parent.joint_name
-        self.joint_name = "RIGHT_SHOULDER"
+        self.joint_name = self.parent.joint_name
 
         self.Cam = cam
-        self.Pose = Pose(parent=self)
-        self.Avatar = Avatar(1920, 1080, parent=self)
+        self.Pose = Pose()
+        self.Avatar = Avatar(1920, 1080, joint_name=self.joint_name)
         
 
     def run(self):
@@ -75,8 +74,8 @@ class Thread2(QThread):
         super().__init__()
         self.parent = parent
         self.running = True
-        # self.joint_name = self.parent.joint_name
-        self.joint_name = "RIGHT_SHOULDER"
+        self.joint_name = self.parent.joint_name
+        # self.joint_name = "RIGHT_SHOULDER"
 
         # --------- thread1 ------------
         self.thread1 = self.parent.thread1
@@ -86,8 +85,8 @@ class Thread2(QThread):
 
         self.Cam = cv2.VideoCapture(f'data/video/{self.joint_name}.mp4')
         self.Pose = Pose()
-        self.Avatar = Avatar(1920, 1080, parent=self)
-        self.Guide = PoseGuide(parent=self)
+        self.Avatar = Avatar(1920, 1080, joint_name=self.joint_name)
+        self.Guide = PoseGuide(joint_name=self.joint_name)
         self.Guide.process()
         self.count = 0
 

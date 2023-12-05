@@ -8,7 +8,6 @@ import numpy as np
 class Pose(QWidget):
     def __init__(self, parent=None):
         super().__init__()
-        self.parent = parent
         self.mp_pose = mp.solutions.pose
         self.mp_drawing = mp.solutions.drawing_utils
         self.pose = self.mp_pose.Pose()

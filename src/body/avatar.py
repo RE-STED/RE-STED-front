@@ -3,13 +3,12 @@ import numpy as np
 from PyQt6.QtWidgets import QWidget
 
 class Avatar(QWidget):
-    def __init__(self, width, height, parent=None):
+    def __init__(self, width, height, joint_name=None):
         super().__init__()
-        self.parent = parent
+        self.joint_name = joint_name
+
         self.width = width
         self.height = height
-        # self.joint_name = self.parent.joint_name
-        self.joint_name = "RIGHT_SHOULDER"
     
     def process(self, joint_pos_dict, joint_name=None):
         # 1. extract center

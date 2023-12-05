@@ -14,7 +14,6 @@ class PoseGUI(QWidget):
 
     def __init__(self, parent=None, cam=None):
         super().__init__()
-        self.parent = parent
         # cam
         self.background = QLabel(self)
         self.Cam = cam
@@ -22,9 +21,8 @@ class PoseGUI(QWidget):
         self.joint_name = "RIGHT_SHOULDER"
 
         # thread
-        self.thread1 = Thread1(cam=self.Cam, parent=self)
+        self.thread1 = Thread1(parent=self, cam=self.Cam)
         self.thread2 = Thread2(parent=self)
-        # self.thread1 = Thread2()
 
         # button
         self.startButton = QPushButton('Start Pose Estimation')
@@ -63,7 +61,7 @@ class PoseGUI(QWidget):
         self.image_pose.setPixmap(QPixmap.fromImage(image))
 
     def start_thread1(self):
-        self.thread1 = Thread1(cam=self.Cam, parent=self)
+        self.thread1 = Thread1(parent=self, cam=self.Cam)
         self.thread1.start()
         self.thread1.updateImg.connect(self.set_thread1)
 
@@ -96,7 +94,6 @@ class PoseGUI(QWidget):
 # gui3 for botton
 
 if __name__ == '__main__':
-    
     class Cami():
         def __init__(self):
             super().__init__()

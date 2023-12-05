@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import math
 from PyQt6.QtWidgets import QWidget
 
+
 from widget import Pose
 from avatar import Avatar
 
@@ -57,13 +58,14 @@ class PoseGuide(QWidget):
         joint_name = str(video_adress.split('/')[-1].split('.')[0])
         landmarks_records = []
         angle_records = []
+
         while True:
             ret, frame = Cam.read()
             if not ret:
                 break
             img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             self.Pose.process(img)
-
+            print(f"frame:{len(landmarks_records)}")
             # save joint info
             landmarks_records.append(self.Pose.convert_to_dict())
             angle_records.append(self.Pose.joint_pos_dict[self.joint_name].angle)

@@ -48,7 +48,7 @@ class Pose(QWidget):
         for joint in joint_angle_list:
             angle = self.extract_angle(joint)
             self.joint_pos_dict[joint[1]].angle = angle
-            print("{}: {}".format(joint[1], int(angle)))
+            # print("{}: {}".format(joint[1], int(angle)))
 
 
     def calculate_angle(self, a, b, c):

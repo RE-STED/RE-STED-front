@@ -50,7 +50,7 @@ class Thread1(QThread):
 
             
             # ------ send img to gui ------
-            print(img.shape)
+            # print(img.shape)
             h, w, ch = img.shape
             bytesPerLine = ch * w
             
@@ -113,18 +113,15 @@ class Thread2(QThread):
                 if v_idx >= len(vally):
                     continue
                 elif i == peak[p_idx]['frame']:
-                    while self.joint_pos_dict[joint_name].angle < peak[p_idx]['angle']:
+                    while self.joint_pos_dict[joint_name].angle <= peak[p_idx]['angle'] * 0.9: # 각도 범위 10%
                         time.sleep(1/30)
-                        print('peak wait')
                     p_idx += 1
                     self.count += 1
                     print(self.count)
 
-                elif i == vally[v_idx]:
-                    print(vally[v_idx]['angle'])
-                    while self.joint_pos_dict[joint_name].angle > vally[v_idx]['angle']:
+                elif i == vally[v_idx]['frame']:
+                    while self.joint_pos_dict[joint_name].angle >= vally[v_idx]['angle'] * 1.1: # 각도 범위 10%
                         time.sleep(1/30)
-                        print('vally wait')
                     v_idx += 1
 
                 landmarks = self.Guide.convert_to_Joint(landmarks_records[i])
@@ -134,7 +131,7 @@ class Thread2(QThread):
                 h, w, _ = img.shape
 
                 # ------ send img to gui ------
-                print(img.shape)
+                # print(img.shape)
                 h, w, ch = img.shape
                 bytesPerLine = ch * w
                 

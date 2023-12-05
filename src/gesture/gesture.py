@@ -98,25 +98,38 @@ class GestureWidget(QWidget):
                 common_gesture = Counter([value[0] for value in prev_gesture_list]).most_common(1)
                 #print(self.gesture, common_gesture[0][1])
 
-                if common_gesture[0][0] == 'rock':
+                if common_gesture[0][0] == 'rock' and common_gesture[0][1] >= 5:
                     #calculate the average score of rock
                     rock_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'rock'])
-                    if(rock_score > 0.85 and self.gesture != 'rock'):
+                    if(rock_score > 0.8 and self.gesture != 'rock'):
                         if self.cursorFlag == False:
                             self.cursorFlag = True
+                            self.gesture = 'rock'
                             self.window().showMouseCursor()
                             print("cursor on")
                         
                         else:
                             self.cursorFlag = False
+                            self.gesture = 'rock'
                             self.window().hideMouseCursor()
                             print("cursor off")
                 
-                self.gesture = common_gesture[0][0]
+                elif common_gesture[0][0] == 'palmOn' and common_gesture[0][1] >= 5:
+                    #calculate the average score of paper
+                    self.gesture = 'palmOn'
+                    print("palmOn")
+
+                elif common_gesture[0][0] == 'pinch':
+                    self.gesture = 'pinch'
+                    print("pinch")
+                
+                else:
+                    self.gesture = 'None'
+                    print("None")
 
                 #if prev_gesture_queue has pinch, then click
                 if self.cursorFlag == True:
-                    if common_gesture[0][0] == 'pinch' and common_gesture[0][1] >= 4:
+                    if self.gesture == 'pinch':
                         #calculate the average score of pinch
                         pinch_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'pinch'])
                         if(pinch_score > 0.6):
@@ -126,7 +139,7 @@ class GestureWidget(QWidget):
                         pymouse.PyMouse().release(int(x), int(y), 1)
 
 
-                print(result.gestures[0][0].category_name, result.gestures[0][0].score)
+                #print(result.gestures[0][0].category_name, result.gestures[0][0].score)
 
             QCursor.setPos(int(x), int(y))
             QGuiApplication.processEvents()

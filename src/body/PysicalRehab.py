@@ -10,7 +10,7 @@ from thread import Thread1, Thread2
 
 # ----------------- GUI -----------------
 
-class PoseGUI(QWidget):
+class PhysicalRehabWidget(QWidget):
 
     def __init__(self, parent=None, cam=None):
         super().__init__()
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             self.setWindowTitle('RESTED-AI-BODY')
             self.resize(1920, 1080)
             self.Cam = Cami()
-            self.PoseGui = PoseGUI(self, self.Cam)
+            self.PoseGui = PhysicalRehabWidget(self, self.Cam)
             self.setCentralWidget(self.PoseGui.background) # set
             
     app = QApplication(sys.argv)

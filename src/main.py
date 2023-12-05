@@ -6,11 +6,11 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from cam import Cam
 
-from body.PysicalRehab import PoseGUI
+from body.PysicalRehab import PhysicalRehabWidget
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, Cam=None):
         super().__init__()
         self.cam = Cam()
         self.setWindowTitle('Hand Tracking with PyQt')
@@ -85,9 +85,9 @@ class MainWindow(QMainWindow):
     def addPysicalRehabWidget(self):
         self.appLabelWidget.appLabelWidget.hide()
         print("addPysicalRehabWidget")
-        # self.physicalRehabWidget = PhysicalRehabWidget(self)
-        # self.layout.addWidget(self.physicalRehabWidget)
-        # self.layout.setCurrentWidget(self.physicalRehabWidget)
+        self.physicalRehabWidget = PhysicalRehabWidget(self, self.cam)
+        self.layout.addWidget(self.physicalRehabWidget.background)
+        self.layout.setCurrentWidget(self.physicalRehabWidget.background)
     
     
     def addCognitiveRehabWidget(self):

@@ -211,18 +211,26 @@ class EmotionWidget(QWidget, EmotionQW):
         
         elif self.mode == 'group':
             if btn_label.index(btn.text()) not in self.answer:
-                btn.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 120); font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 35pt;}");
                 self.answer.append(btn_label.index(btn.text()))
+                btn.setStyleSheet("QPushButton { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(0, 0, 0, 120); font-weight: bold; font-size: 35pt;}");
+                #print("Add", self.answer)
+                
             else:
                 self.answer.remove(btn_label.index(btn.text()))
-                btn.setStyleSheet("QPushButton { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(0, 0, 0, 120); font-weight: bold; font-size: 35pt;}");
-                #btn.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 120); font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 35pt;}");
-
+                btn.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 120); font-size: 30pt; color: white; border-radius: 1.5em;} QPushButton:hover { background-color: rgba(200, 200, 200, 150); font-weight: bold; font-size: 35pt;}");
+                #print("Remove", self.answer)
             
             
     def Check(self):
-        self.answer = sorted(self.answer)
-        self.target = sorted(self.target)
+        self.answer = set(self.answer)
+        self.target = set(self.target)
+        print(self.answer, self.target)
+        for i in self.answer:
+            print(self.label[i], end = ' ')
+        print()
+        for i in self.target:
+            print(self.label[i], end = ' ')
+        print()
         
         # answer와 target의 구성이 같으면 정답
         if self.answer == self.target:

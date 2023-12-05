@@ -1,4 +1,5 @@
 import sys
+import json
 from PyQt6.QtWidgets import QApplication, QMainWindow, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton, QVBoxLayout
 from PyQt6.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve
 
@@ -109,6 +110,11 @@ class MainWindow(QMainWindow):
 
     def deleteCognitiveRehabWidget(self):
         print("deleteCognitiveRehabWidget")
+        
+        # cognitiveRehabWidget의 Result를 json으로 저장
+        with open('src/mind/Result.json', 'w', encoding='utf-8') as f:
+            json.dump(self.cognitiveRehabWidget.RecordResultDict, f, indent=4, ensure_ascii=False)
+        
         self.layout.removeWidget(self.cognitiveRehabWidget)
         self.cognitiveRehabWidget.deleteLater()
         self.appLabelWidget.show()

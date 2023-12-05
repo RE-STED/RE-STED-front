@@ -106,26 +106,26 @@ class GestureWidget(QWidget):
                             self.cursorFlag = True
                             self.gesture = 'rock'
                             self.window().showMouseCursor()
-                            print("cursor on")
+                            #print("cursor on")
                         
                         else:
                             self.cursorFlag = False
                             self.gesture = 'rock'
                             self.window().hideMouseCursor()
-                            print("cursor off")
+                            #print("cursor off")
                 
                 elif common_gesture[0][0] == 'palmOn' and common_gesture[0][1] >= 5:
                     #calculate the average score of paper
                     self.gesture = 'palmOn'
-                    print("palmOn")
+                    #print("palmOn")
 
                 elif common_gesture[0][0] == 'pinch':
                     self.gesture = 'pinch'
-                    print("pinch")
+                    #print("pinch")
                 
                 else:
                     self.gesture = 'None'
-                    print("None")
+                    #print("None")
 
                 #if prev_gesture_queue has pinch, then click
                 if self.cursorFlag == True:

@@ -18,10 +18,12 @@ from ..qt6.emotionQT import EmotionBoard
 EmotionQW = uic.loadUiType("src/mind/qt6/UI/EmotionQW.ui")[0]
 
 class EmotionWidget(QWidget, EmotionQW):
-    def __init__(self):
+    def __init__(self, Result):
         super().__init__()
         self.setupUi(self)
         # PyQt6
+        
+        self.Result = Result
         
         self.HomeButton = self.findChild(QPushButton, "HomeButton")
         self.HomeButton.setStyleSheet("QPushButton { background-color: rgba(0, 0, 0, 50); font-size: 48pt; color: white; } QPushButton:hover { background-color: rgba(0, 0, 0, 100); font-weight: bold; font-size: 50pt;}");
@@ -128,6 +130,7 @@ class EmotionWidget(QWidget, EmotionQW):
         img_name = random_choice(img_list)
         
         self.who = self.img_dir.split('/')[-2]
+        self.Result['Who'] = self.who
         print(f'선택된 인물은 {self.who} 입니다.')
         return self.img_dir + img_name, mode
     
@@ -166,6 +169,7 @@ class EmotionWidget(QWidget, EmotionQW):
             img_label.setPixmap(img)
             
             self.stack.setCurrentIndex(3)
+            self.Result['Emotion'] = self.target
             
                 
 
@@ -187,7 +191,7 @@ class EmotionWidget(QWidget, EmotionQW):
         
             
             self.stack.setCurrentIndex(2)
-            
+            self.Result['Emotion'] = [self.label[i] for i in self.target]
             
                 
     def push_answer(self):
@@ -208,6 +212,7 @@ class EmotionWidget(QWidget, EmotionQW):
                 AnswerMsg.setWindowTitle("오답")
                 AnswerMsg.setStandardButtons(QMessageBox.StandardButton.Ok)
                 AnswerMsg.exec()
+                self.Result['Score'] -= 10
         
         elif self.mode == 'group':
             if btn_label.index(btn.text()) not in self.answer:
@@ -248,12 +253,18 @@ class EmotionWidget(QWidget, EmotionQW):
             AnswerMsg.setWindowTitle("오답")
             AnswerMsg.setStandardButtons(QMessageBox.StandardButton.Ok)
             AnswerMsg.exec()
+            self.Result['Score'] -= 5
         
     def End(self):
         for i in range(100):
             i = i / 100
             self.setWindowOpacity(1 - i)
             time.sleep(0.005)
+            
+        hms = time.strftime('%H:%M:%S', time.localtime(time.time()))
+        self.Result['Time'] = hms
+        self.parent.RecordResultDict[self.parent.today]['Emotion'].append(self.Result)
+        print(self.Result)
         
         self.parent.btnWidget.show()
         self.parent.layout.removeWidget(self)

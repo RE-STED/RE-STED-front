@@ -1,5 +1,7 @@
 import typing
 import sys
+import json
+import time
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton
 from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication, QMouseEvent
@@ -7,6 +9,7 @@ from PyQt6.QtCore import QThread, Qt, pyqtSignal, QSize, QPropertyAnimation, QEa
 
 sys.path.append('src')
 
+from mind.utils.util import select_level
 from mind.quiz.pattern import FindPatterns
 from mind.quiz.emotion import EmotionWidget
 from mind.quiz.object import ObjectWidget
@@ -139,6 +142,20 @@ class CognitiveRehabWidget(QWidget):
         
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
         self.setStyleSheet("background-color: transparent;")
+        
+        # Result
+        
+        # mind/Result.json를 불러와서 self.RecoredResultDict에 딕셔너리 형태로 저장
+        with open('src/mind/Result.json', 'r', encoding='utf-8') as f:
+            self.RecordResultDict = json.load(f)
+        
+        # today에 오늘 날짜를 YY-MM-DD 형태로 저장
+        self.today = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+        if self.today not in self.RecordResultDict.keys():
+            self.RecordResultDict[self.today] = {}
+            self.RecordResultDict[self.today]['Pattern'] = []
+            self.RecordResultDict[self.today]['Object'] = []
+            self.RecordResultDict[self.today]['Emotion'] = []
 
 
     def handleButtonClicked(self, index):
@@ -154,7 +171,7 @@ class CognitiveRehabWidget(QWidget):
             
     def pattern(self):
         self.setPatternWidget()
-        self.patternWidget.make_random_board(2)
+        self.patternWidget.make_random_board(select_level(self.RecordResultDict))
         self.layout.addWidget(self.patternWidget)
         self.btnWidget.hide()
         self.layout.setCurrentWidget(self.patternWidget)
@@ -174,17 +191,22 @@ class CognitiveRehabWidget(QWidget):
         self.objectWidget.captureThread.start()
         
     def setPatternWidget(self):
-        self.patternWidget = FindPatterns()
+        patternResult = {"Time":None, 'Pattern' : None, 'Number' : None, 'Score': -1}
+        self.patternWidget = FindPatterns(patternResult)
         self.patternWidget.parent = self
         self.patternWidget.HomeButton.clicked.connect(self.gameHomeBtn)
         
     def setEmotionWidget(self):
-        self.emotionWidget = EmotionWidget()
+        emotionResult = {'Time':None, 'Emotion' : None, 'Score': 100, 'Who': ''}
+        
+        self.emotionWidget = EmotionWidget(emotionResult)
         self.emotionWidget.parent = self
         self.emotionWidget.HomeButton.clicked.connect(self.gameHomeBtn)
     
     def setObjectWidget(self):
-        self.objectWidget = ObjectWidget(cam=self.cam)
+        objectResult = {'Time':None, 'Object' : None, 'Success': None}
+        
+        self.objectWidget = ObjectWidget(cam=self.cam, Result=objectResult)
         self.objectWidget.parent = self
         self.objectWidget.HomeButton.clicked.connect(self.gameHomeBtn)
 

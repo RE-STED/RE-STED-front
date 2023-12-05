@@ -63,7 +63,7 @@ class Detection:
       bbox = detection.bounding_box
       start_point = bbox.origin_x, bbox.origin_y
       end_point = bbox.origin_x + bbox.width, bbox.origin_y + bbox.height
-      cv2.rectangle(image, start_point, end_point, TEXT_COLOR, 3)
+      cv2.rectangle(image, start_point, end_point, (0, 255, 0), 3)
 
       # Draw label and score
       category = detection.categories[0]
@@ -73,7 +73,7 @@ class Detection:
       text_location = (MARGIN + bbox.origin_x,
                       MARGIN + ROW_SIZE + bbox.origin_y)
       cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_PLAIN,
-                  FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
+                  FONT_SIZE,  (0, 255, 0), FONT_THICKNESS)
 
     return image
 
@@ -96,7 +96,7 @@ class Detection:
     #cv2.imwrite(image_name, annotated_image)
 
     
-    return detection_result.detections
+    return detection_result.detections, annotated_image
   
   
 
@@ -104,8 +104,10 @@ class Detection:
 class ObjectQuiz(QThread):
   frameCaptured = pyqtSignal(QImage)
   
-  def __init__(self, cam):
+  def __init__(self, cam, Result):
     super().__init__()
+    
+    self.Result = Result
     
     # 영상 속성
     self.Cam = cam
@@ -149,17 +151,17 @@ class ObjectQuiz(QThread):
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
       
-    self.show_text("Start Object Quiz!", 3)
+    self.show_text("Start Object Quiz!", 3, detect=False)
     
-    self.show_text("Kimchi~", 1)
+    self.show_text("Kimchi~", 1, detect=False)
     
-    self.countdown(5, show_window=True)
+    self.countdown(5, show_window=True, detect=True)
     
     frame1 = self.show_box(1)
     
     self.show_text("Completed Screenshot", 2)
     
-    detections = self.model.detect(frame1, "origin.jpg")
+    detections, _ = self.model.detect(frame1, "origin.jpg")
     
     categories = [detection.categories[0].category_name for detection in detections]
     
@@ -169,41 +171,63 @@ class ObjectQuiz(QThread):
       
       self.show_text("Let's try again!", 4)
       
-      self.countdown(3, show_window=True)
+      self.countdown(3, show_window=True, detect=True)
       
-      self.show_text("Kimchi~", 1)
+      self.show_text("Kimchi~", 1, detect=False)
       frame1 = self.show_box(1)
-      detections = self.model.detect(frame1, "origin.jpg")
+      detections, _ = self.model.detect(frame1, "origin.jpg")
       categories = [detection.categories[0].category_name for detection in detections]
   
     
     target_obj = random.choice(categories)
+    self.Result['Object'] = target_obj
     
-    self.show_text(f"Find {target_obj} in 10 seconds!", 5)
+    self.show_text(f"Find {target_obj} in 10 seconds!", 4, detect=False)
 
-    self.countdown(10, show_window=True)
+    self.countdown(10, show_window=True, detect=True)
     
     frame2 = self.show_box(1)
-    detection_results = self.model.detect(frame2, "result.jpg")
+    detection_results, _ = self.model.detect(frame2, "result.jpg")
     
     detection_results = [detection.categories[0].category_name for detection in detection_results]
     
-    if len(detection_results) == 0:
-      self.show_text("Nothing Detected!!", 3)
-      print("Nothing !")
+    cnt = 5
+    while not len(detection_results) and cnt:
+      cnt -= 1
+      self.show_text("Nothing Detected!!", 4)
+      print("Wrong!")
       
+      self.show_text("Let's try again", 4)
+      
+      self.countdown(3, show_window=True, detect=True)
+      
+      self.show_text("Kimchi~", 1, detect=False)
+      frame2 = self.show_box(1)
+      detection_results, _ = self.model.detect(frame2, "result.jpg")
+      detection_results = [detection.categories[0].category_name for detection in detection_results]
+      
+    if len(detection_results) == 0:
+      self.show_text("No more Detecting", 4, detect=False)
+      self.Result['Score'] = -1
+
     else:
       detection_result = detection_results[0]
       print("\nDetect {}, Answer is {}\n".format(detection_result, target_obj))
+      
       if detection_result == target_obj:
-        self.show_text("Correct!", 3)
-        print("Correct!")
+        self.show_text("Correct!", 3, detect=False)
+        self.Result['Success'] = 1
+
       else:
-        self.show_text("Wrong!", 3)
-        print("Wrong!")
+        self.show_text("Wrong!", 3, detect=False)
+        self.Result['Success'] = 0
       
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    hms = time.strftime('%H:%M:%S', time.localtime(time.time()))
+    self.Result['Time'] = hms
+    self.parent.parent.RecordResultDict[self.parent.parent.today]['Object'].append(self.Result)
+    
     self.parent.parent.btnWidget.show()
     self.parent.parent.layout.removeWidget(self.parent)
     self.parent.close_window()
@@ -255,37 +279,6 @@ class ObjectQuiz(QThread):
 
     self.frameCaptured.emit(image)
     
-  # N초 동안 frame을 detection하여 결과를 visulaize한 이미지를 반환하는 함수
-  def show_detection(self, show_time):
-    start_time = time.time()
-    show_over = False
-
-    while True:
-        
-      if show_over:
-          break
-    
-      input_frame = self.get_frame()
-      
-      if cv2.waitKey(1) & 0xFF == ord('q'):
-          break
-      
-      #input_frame = cv2.cvtColor(input_frame, cv2.COLOR_BGR2RGB)
-      
-      elapsed_time = int(time.time() - start_time)
-      remaining_time = max(show_time - elapsed_time, 0)
-
-      output_frame = input_frame.copy()
-      detection_result = self.model.detect(output_frame)
-      annotated_image = self.model.visualize(output_frame, detection_result)
-      
-      if remaining_time <= 0:
-          show_over = True
-          
-      #cv2.imshow(window_name, annotated_image)
-      self.update_frame(frame=annotated_image)
-      
-    return annotated_image
 
   # 영상에 글자를 쓰는 함수
   def draw_text(self, frame, text, position, font_scale=1.0, color=(0, 0, 0), thickness=1):
@@ -301,7 +294,7 @@ class ObjectQuiz(QThread):
                         thickness=thickness)
 
   # 영상에 n초 카운트다운하는 함수
-  def countdown(self, countdown_time, show_window = False, window_name='MediaPipe Object Detection'):
+  def countdown(self, countdown_time, show_window = False, window_name='MediaPipe Object Detection', detect = False):
     start_time = time.time()
     countdown_over = False
 
@@ -315,13 +308,17 @@ class ObjectQuiz(QThread):
       if cv2.waitKey(1) & 0xFF == ord('q'):
           break
       
-      #input_frame = cv2.cvtColor(input_frame, cv2.COLOR_BGR2RGB)
+      
       
       elapsed_time = int(time.time() - start_time)
       remaining_time = max(countdown_time - elapsed_time, 0)
 
       if show_window:
         output_frame = input_frame.copy()
+        
+        if detect:
+          _, output_frame = self.model.detect(output_frame)
+        
         frame = self.draw_text(frame = output_frame, 
                           text = f"Countdown: {remaining_time}", 
                           position= self.position.get('center'), 
@@ -339,7 +336,7 @@ class ObjectQuiz(QThread):
       self.update_frame(frame=frame)
         
   # n초 동안 영상에 글자를 쓰는 함수
-  def show_text(self, text, show_time, window_name='MediaPipe Object Detection'):
+  def show_text(self, text, show_time, window_name='MediaPipe Object Detection', detect = True):
     start_time = time.time()
     show_over = False
 
@@ -359,6 +356,8 @@ class ObjectQuiz(QThread):
       remaining_time = max(show_time - elapsed_time, 0)
 
       output_frame = input_frame.copy()
+      if detect:
+        _, output_frame = self.model.detect(output_frame)
       frame = self.draw_text(frame = output_frame, 
                           text = text, 
                           position= self.position.get('center'), 
@@ -404,13 +403,13 @@ class ObjectQuiz(QThread):
     return frame
 
 class ObjectWidget(DetectionWidget):
-    def __init__(self, cam):
+    def __init__(self, cam, Result):
         super().__init__()
         
         self.resize(1920, 1080)
         self.video_size = self.video.size()
 
-        self.captureThread = ObjectQuiz(cam)
+        self.captureThread = ObjectQuiz(cam, Result)
         self.captureThread.frameCaptured.connect(self.update_frame)
         
         self.HomeButton.clicked.connect(self.close_window)

@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 import random
+import time
+
+from ..utils.util import select_level
 from ..qt6.patternQT import PatternWindow
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton, QSizePolicy
 
 
 class FindPatterns(PatternWindow):
-    def __init__(self):
+    def __init__(self, Result):
         super().__init__()
+        
+        self.Result = Result
+        self.score = 100
         
         # Qt Setting
         self.set_btn()
@@ -42,17 +48,21 @@ class FindPatterns(PatternWindow):
         self.lon = {1 : [0, 7, 8], 2:[1, 4, 6, 9], 3:[2, 3, 5]}
         
         self.target_tile = random.choice(list(self.tile.keys()))
+        self.Result['Pattern'] = self.target_tile
         
         # QusetionText의 글자 크기를 조절하려면
         self.QuestionText.setStyleSheet("font-size: 40pt;")
         self.QuestionText.setText(f"{self.tile[self.target_tile]}를 모두 클릭하고 숨겨진 숫자를 찾아보세요.")
         
         self.cor_answer = set([])
-
+        
     
     def make_random_board(self, level):
         
         self.target_num = random.choice(self.lon[level])
+        self.Result['Number'] = self.target_num
+        self.Result['Level'] = level
+
         self.make_number(self.target_num)
         
         # 가능한 문양들
@@ -257,16 +267,27 @@ class FindPatterns(PatternWindow):
         # print(self.cor_answer)
         # print(self.coordinate[self.target_tile])
         if self.cor_answer == self.coordinate[self.target_tile] and num_answer == self.target_num:
+            self.Result['Score'] = self.score
+            
+            hms = time.strftime('%H:%M:%S', time.localtime(time.time()))
+            self.Result['Time'] = hms
+            self.parent.RecordResultDict[self.parent.today]['Pattern'].append(self.Result)
+            
             print("정답!")
             self.show_ending_message(True)
             self.parent.btnWidget.show()
             self.parent.layout.removeWidget(self)
             
+            
         else:
-            # if self.cor_answer != self.coordinate[self.target_tile]:
-            #     print("빠진 문자가 있는지 확인해주세요.")
-            # if num_answer != self.target_num:
-            #     print("숨겨진 숫자를 다시 확인해주세요.")
+            if self.cor_answer != self.coordinate[self.target_tile]:
+                self.score -= 5
+                print("빠진 문자가 있는지 확인해주세요.")
+            
+            if num_answer != self.target_num:
+                self.score -= 20
+                print("숨겨진 숫자를 다시 확인해주세요.")
+
             self.show_ending_message(False)
 
 

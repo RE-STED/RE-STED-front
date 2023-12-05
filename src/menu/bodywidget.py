@@ -1,9 +1,11 @@
-import typing
+import typing, sys
+sys.path.append('src')
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QGraphicsOpacityEffect, QStackedLayout, QPushButton
 from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication, QMouseEvent
 from PyQt6.QtCore import QThread, Qt, pyqtSignal, QSize, QPropertyAnimation, QEasingCurve, QCoreApplication, QEvent
 
+from body.PysicalRehab import PoseGUI
 class AppButton(QPushButton):
     buttonClicked = pyqtSignal(int)  # 사용자 정의 신호 생성
 
@@ -56,11 +58,11 @@ class AppButtonsWidget(QWidget):
 
         for i in range(4):
             if(i == 0):
-                button = AppButton(i, f'Shoulder', self)
+                button = AppButton(i, f'RIGHT_SHOULDER', self)
             elif(i == 1):
-                button = AppButton(i, f'Elbow', self)
+                button = AppButton(i, f'RIGHT_ELBOW', self)
             elif(i == 2):
-                button = AppButton(i, f'Wrist', self)
+                button = AppButton(i, f'RIGHT_KNEE', self)
             elif(i == 3):
                 button = AppButton(i, f'+', self)
             
@@ -83,12 +85,17 @@ class AppButtonsWidget(QWidget):
 
 
 
-class PhysicalRehabWidget(QWidget):
-    def __init__(self, parent=None):
+class PhysicalRehabWidget(QWidget):    
+    def __init__(self, parent, cam):
         super().__init__(parent)
+        
+        self.cam = cam
         appLabelLayout = QHBoxLayout()
         appLabelLayout.setContentsMargins(50, 50, 50, 50)  # Set all margins to 50
         appLabelLayout.addStretch()
+
+        self.layout = QStackedLayout()
+
 
         menuLayout = QVBoxLayout()
         menuLayout.addStretch()
@@ -118,16 +125,205 @@ class PhysicalRehabWidget(QWidget):
         self.appLabel.connectButtonClicked(self.handleButtonClicked)
         appLabelLayout.addWidget(self.appLabel)
 
-        # self.appLabelWidget = QWidget(self)
-        self.setLayout(appLabelLayout)
+        self.btnWidget = QWidget(self)
+        self.btnWidget.setLayout(appLabelLayout)
+
+
+        # self.appLabelWidget = QWidget(self)        
+        self.layout.addWidget(self.btnWidget)
+        
+        self.setLayout(self.layout)
+        
+        self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
         self.setStyleSheet("background-color: transparent;")
+
 
     
     # AppButton이 클릭될 때 실행되는 슬롯
     def handleButtonClicked(self, button_index):
         if button_index == 0:
             print("0번째 운동 실행")
+            joint_name = "RIGHT_SHOULDER"
             pass
         elif button_index == 1:
             print("1번째 운동 실행")
+            joint_name = "RIGHT_ELBOW"
             pass
+        elif button_index == 2:
+            print("2번째 운동 실행")
+            joint_name = "RIGHT_KNEE"
+            pass
+        elif button_index == 3:
+            print("운동 추가")
+            joint_name = "RIGHT_SHOULDER"
+        self.excercise(joint_name)
+        
+
+
+    # def handleButtonClicked(self, index):
+    #     if(index == 0):
+    #         print("Pattern Quiz")
+    #         self.pattern()
+    #     elif(index == 1):
+    #         print("Find Something")
+    #         self.object()
+    #     elif(index == 2):
+    #         print("Guess Face")
+    #         self.emotion()
+            
+    def excercise(self, joint_name):
+        self.setPoseWidget(joint_name)
+        self.layout.addWidget(self.poseWidget.background)
+        self.btnWidget.hide()
+        self.layout.setCurrentWidget(self.poseWidget.background)
+
+        # self.physicalRehabWidget = PhysicalRehabWidget(self, self.cam)
+        # self.layout.addWidget(self.physicalRehabWidget)
+        # self.layout.setCurrentWidget(self.physicalRehabWidget)
+    
+    # def emotion(self):
+    #     print("emotion")
+    #     self.setEmotionWidget()
+    #     self.layout.addWidget(self.emotionWidget)
+    #     self.btnWidget.hide()
+    #     self.layout.setCurrentWidget(self.emotionWidget)
+    
+    # def object(self):
+    #     self.setObjectWidget()
+    #     self.layout.addWidget(self.objectWidget)
+    #     self.btnWidget.hide()
+    #     self.layout.setCurrentWidget(self.objectWidget)
+    #     self.objectWidget.captureThread.start()
+        
+    def setPoseWidget(self, joint_name):
+        self.poseWidget = PoseGUI(self, self.cam, joint_name)
+        # self.poseWidget.HomeButton.clicked.connect(self.gameHomeBtn)
+        
+    # def setEmotionWidget(self):
+    #     self.emotionWidget = EmotionWidget()
+    #     self.emotionWidget.parent = self
+    #     self.emotionWidget.HomeButton.clicked.connect(self.gameHomeBtn)
+    
+    # def setObjectWidget(self):
+    #     self.objectWidget = ObjectWidget(cam=self.cam)
+    #     self.objectWidget.parent = self
+    #     self.objectWidget.HomeButton.clicked.connect(self.gameHomeBtn)
+
+    # def gameHomeBtn(self):
+    #     #지금 QStackedLayout 가장 위에 있는 위젯을 제거하고 MenuWidget을 보여줌
+    #     print("삭제 전", self.layout.currentWidget())
+    #     self.layout.removeWidget(self.layout.currentWidget())
+    #     print("삭제 후", self.layout.currentWidget())
+    #     self.btnWidget.show()
+        
+
+
+
+
+
+# class CognitiveRehabWidget(QWidget):
+#     def __init__(self, cam, parent=None):
+#         super().__init__(parent)
+        
+#         self.cam = cam 
+        
+#         appLabelLayout = QHBoxLayout()
+#         appLabelLayout.setContentsMargins(50, 50, 50, 50)  # Set all margins to 50
+#         appLabelLayout.addStretch()
+
+#         self.layout = QStackedLayout()
+
+#         menuLayout = QVBoxLayout()
+#         menuLayout.addStretch()
+#         resultButton = QPushButton("Result", self)
+#         resultButton.setFixedSize(130, 130)
+#         resultButton.setStyleSheet(
+#             'background: rgba(0, 0, 0, 0.5); color: white; font-size: 25px; border-radius: 1em;'
+#             'hover { background: rgba(0, 0, 0, 0.8); }'
+#         )
+#         menuLayout.addWidget(resultButton)
+#         #resultButton.clicked.connect()
+
+#         homeButton = QPushButton("Home", self)
+#         homeButton.setFixedSize(130, 130)
+#         homeButton.setStyleSheet(
+#             'background: rgba(0, 0, 0, 0.5); color: white; font-size: 25px; border-radius: 1em;'
+#             'hover { background: rgba(0, 0, 0, 0.8); }'
+#         )
+#         menuLayout.addWidget(homeButton)
+#         menuLayout.addStretch()
+#         homeButton.clicked.connect(self.parent().deleteCognitiveRehabWidget)
+        
+#         appLabelLayout.addLayout(menuLayout)
+
+#         self.appLabel = AppButtonsWidget(self)
+#         self.appLabel.connectButtonClicked(self.handleButtonClicked)
+#         appLabelLayout.addWidget(self.appLabel)
+        
+#         self.btnWidget = QWidget(self)
+#         self.btnWidget.setLayout(appLabelLayout)
+
+#         # self.appLabelWidget = QWidget(self)
+        
+#         self.layout.addWidget(self.btnWidget)
+        
+#         self.setLayout(self.layout)
+        
+#         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
+#         self.setStyleSheet("background-color: transparent;")
+
+
+#     def handleButtonClicked(self, index):
+#         if(index == 0):
+#             print("Pattern Quiz")
+#             self.pattern()
+#         elif(index == 1):
+#             print("Find Something")
+#             self.object()
+#         elif(index == 2):
+#             print("Guess Face")
+#             self.emotion()
+            
+#     def pattern(self):
+#         self.setPatternWidget()
+#         self.patternWidget.make_random_board(2)
+#         self.layout.addWidget(self.patternWidget)
+#         self.btnWidget.hide()
+#         self.layout.setCurrentWidget(self.patternWidget)
+    
+#     def emotion(self):
+#         print("emotion")
+#         self.setEmotionWidget()
+#         self.layout.addWidget(self.emotionWidget)
+#         self.btnWidget.hide()
+#         self.layout.setCurrentWidget(self.emotionWidget)
+    
+#     def object(self):
+#         self.setObjectWidget()
+#         self.layout.addWidget(self.objectWidget)
+#         self.btnWidget.hide()
+#         self.layout.setCurrentWidget(self.objectWidget)
+#         self.objectWidget.captureThread.start()
+        
+#     def setPatternWidget(self):
+#         self.patternWidget = FindPatterns()
+#         self.patternWidget.parent = self
+#         self.patternWidget.HomeButton.clicked.connect(self.gameHomeBtn)
+        
+#     def setEmotionWidget(self):
+#         self.emotionWidget = EmotionWidget()
+#         self.emotionWidget.parent = self
+#         self.emotionWidget.HomeButton.clicked.connect(self.gameHomeBtn)
+    
+#     def setObjectWidget(self):
+#         self.objectWidget = ObjectWidget(cam=self.cam)
+#         self.objectWidget.parent = self
+#         self.objectWidget.HomeButton.clicked.connect(self.gameHomeBtn)
+
+#     def gameHomeBtn(self):
+#         #지금 QStackedLayout 가장 위에 있는 위젯을 제거하고 MenuWidget을 보여줌
+#         print("삭제 전", self.layout.currentWidget())
+#         self.layout.removeWidget(self.layout.currentWidget())
+#         print("삭제 후", self.layout.currentWidget())
+#         self.btnWidget.show()
+        

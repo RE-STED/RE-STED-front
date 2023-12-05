@@ -8,11 +8,11 @@ from menu.bodywidget import PhysicalRehabWidget
 from menu.mindwidget import CognitiveRehabWidget
 from cam import Cam
 
-from body.PysicalRehab import PhysicalRehabWidget
+#from body.PysicalRehab import PhysicalRehabWidget
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, Cam=None):
+    def __init__(self):
         super().__init__()
         self.cam = Cam()
         self.setWindowTitle('Hand Tracking with PyQt')
@@ -80,12 +80,7 @@ class MainWindow(QMainWindow):
     def addPysicalRehabWidget(self):
         self.appLabelWidget.hide()
         print("addPysicalRehabWidget")
-<<<<<<< HEAD
         self.physicalRehabWidget = PhysicalRehabWidget(self, self.cam)
-        self.layout.addWidget(self.physicalRehabWidget.background)
-        self.layout.setCurrentWidget(self.physicalRehabWidget.background)
-=======
-        self.physicalRehabWidget = PhysicalRehabWidget(self)
         self.layout.addWidget(self.physicalRehabWidget)
         self.layout.setCurrentWidget(self.physicalRehabWidget)
 
@@ -96,7 +91,6 @@ class MainWindow(QMainWindow):
         self.physicalRehabWidget.deleteLater()
         self.appLabelWidget.show()
         self.layout.setCurrentWidget(self.appLabelWidget)
->>>>>>> main
     
     
     def addCognitiveRehabWidget(self):

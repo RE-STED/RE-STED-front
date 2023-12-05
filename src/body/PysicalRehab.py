@@ -10,15 +10,14 @@ from thread import Thread1, Thread2
 
 # ----------------- GUI -----------------
 
-class PhysicalRehabWidget(QWidget):
+class PoseGUI(QWidget):
 
-    def __init__(self, parent=None, cam=None):
+    def __init__(self, parent=None, cam=None, joint_name=None):
         super().__init__()
-        # cam
         self.background = QLabel(self)
         self.Cam = cam
-        # self.joint_name = self.parent.joint_name
-        self.joint_name = "RIGHT_SHOULDER"
+        self.joint_name = joint_name
+        self.background.setStyleSheet("background-color: rgba(0, 0, 0, 30);")
 
         # thread
         self.thread1 = Thread1(parent=self, cam=self.Cam)
@@ -29,24 +28,24 @@ class PhysicalRehabWidget(QWidget):
         self.startButton.clicked.connect(self.toggle_capture)
         self.is_capturing = False
 
-        # pose screen
-        self.scene1 = QGraphicsScene(self)
-        self.view1 = QGraphicsView(self.scene1)
-        self.view1.scale(0.4, 0.4)
-        self.image_pose = QGraphicsPixmapItem()
-        self.scene1.addItem(self.image_pose)
+        opacity_effect_pose = QGraphicsOpacityEffect()
+        opacity_effect_pose.setOpacity(0.5)  # 0.0부터 1.0까지의 값을 설정하여 투명도를 조절할 수 있습니다.
+        opacity_effect_guide = QGraphicsOpacityEffect()
+        opacity_effect_guide.setOpacity(0.5)  # 0.0부터 1.0까지의 값을 설정하여 투명도를 조절할 수 있습니다.
+        
 
-        # guide screen
-        self.scene2 = QGraphicsScene(self)
-        self.view2 = QGraphicsView(self.scene2)
-        self.view2.scale(0.4, 0.4)
-        self.image_guide = QGraphicsPixmapItem()
-        self.scene2.addItem(self.image_guide)
+        self.image_pose = QLabel()
+        self.image_pose.setScaledContents(True)
+        self.image_pose.setGraphicsEffect(opacity_effect_pose)
+
+        self.image_guide = QLabel()
+        self.image_guide.setScaledContents(True)
+        self.image_guide.setGraphicsEffect(opacity_effect_guide)
 
         # horizion layout
         self.hlayout = QHBoxLayout()
-        self.hlayout.addWidget(self.view1)
-        self.hlayout.addWidget(self.view2)
+        self.hlayout.addWidget(self.image_pose)
+        self.hlayout.addWidget(self.image_guide)
 
         vlayout = QVBoxLayout()
         # verteical layout
@@ -114,7 +113,7 @@ if __name__ == '__main__':
             self.setWindowTitle('RESTED-AI-BODY')
             self.resize(1920, 1080)
             self.Cam = Cami()
-            self.PoseGui = PhysicalRehabWidget(self, self.Cam)
+            self.PoseGui = PoseGUI(self, self.Cam, joint_name='RIGHT_SHOULDER')
             self.setCentralWidget(self.PoseGui.background) # set
             
     app = QApplication(sys.argv)

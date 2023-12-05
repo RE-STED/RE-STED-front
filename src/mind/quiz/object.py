@@ -255,6 +255,37 @@ class ObjectQuiz(QThread):
 
     self.frameCaptured.emit(image)
     
+  # N초 동안 frame을 detection하여 결과를 visulaize한 이미지를 반환하는 함수
+  def show_detection(self, show_time):
+    start_time = time.time()
+    show_over = False
+
+    while True:
+        
+      if show_over:
+          break
+    
+      input_frame = self.get_frame()
+      
+      if cv2.waitKey(1) & 0xFF == ord('q'):
+          break
+      
+      #input_frame = cv2.cvtColor(input_frame, cv2.COLOR_BGR2RGB)
+      
+      elapsed_time = int(time.time() - start_time)
+      remaining_time = max(show_time - elapsed_time, 0)
+
+      output_frame = input_frame.copy()
+      detection_result = self.model.detect(output_frame)
+      annotated_image = self.model.visualize(output_frame, detection_result)
+      
+      if remaining_time <= 0:
+          show_over = True
+          
+      #cv2.imshow(window_name, annotated_image)
+      self.update_frame(frame=annotated_image)
+      
+    return annotated_image
 
   # 영상에 글자를 쓰는 함수
   def draw_text(self, frame, text, position, font_scale=1.0, color=(0, 0, 0), thickness=1):

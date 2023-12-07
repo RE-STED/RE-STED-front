@@ -3,9 +3,10 @@ import numpy as np
 from PyQt6.QtWidgets import QWidget
 
 class Avatar(QWidget):
-    def __init__(self, width, height, joint_name=None):
+    def __init__(self, width, height, data=None):
         super().__init__()
-        self.joint_name = joint_name
+        self.data = data
+        self.joint_name = data['joint_name']
 
         self.width = width
         self.height = height

@@ -5,12 +5,13 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBo
 from PyQt6.QtGui import QImage, QPixmap, QCursor, QGuiApplication, QMouseEvent
 from PyQt6.QtCore import QThread, Qt, pyqtSignal, QSize, QPropertyAnimation, QEasingCurve, QCoreApplication, QEvent
 
-from body.PysicalRehab import PoseGUI
+from body.PhysicalRehab import PoseGUI
 class AppButton(QPushButton):
     buttonClicked = pyqtSignal(int)  # 사용자 정의 신호 생성
 
     def __init__(self, index, text, parent=None):
         super().__init__(text, parent)
+        self.parent = parent
         self.index = index
         self.setStyleSheet(
             'background: black; color: white; font-size: 25px; border-radius: 1.5em;'
@@ -58,11 +59,11 @@ class AppButtonsWidget(QWidget):
 
         for i in range(4):
             if(i == 0):
-                button = AppButton(i, f'RIGHT_SHOULDER', self)
+                button = AppButton(i, f'오른쪽\n어깨', self)
             elif(i == 1):
-                button = AppButton(i, f'RIGHT_ELBOW', self)
+                button = AppButton(i, f'오른쪽\n팔꿈치', self)
             elif(i == 2):
-                button = AppButton(i, f'RIGHT_KNEE', self)
+                button = AppButton(i, f'오른쪽\n무릎', self)
             elif(i == 3):
                 button = AppButton(i, f'+', self)
             
@@ -143,20 +144,28 @@ class PhysicalRehabWidget(QWidget):
     def handleButtonClicked(self, button_index):
         if button_index == 0:
             print("0번째 운동 실행")
-            joint_name = "RIGHT_SHOULDER"
-            pass
+            data = {"joint_name": "RIGHT_SHOULDER",
+                    'level': 3,
+                    'challenge': 10}
+            
         elif button_index == 1:
             print("1번째 운동 실행")
-            joint_name = "RIGHT_ELBOW"
-            pass
+            data = {"joint_name": "RIGHT_ELBOW",
+                    'level': 5,
+                    'challenge': 10}
+            
         elif button_index == 2:
             print("2번째 운동 실행")
-            joint_name = "RIGHT_KNEE"
-            pass
+            data = {"joint_name": "RIGHT_KNEE",
+                    'level': 5,
+                    'challenge': 10}
+            
         elif button_index == 3:
             print("운동 추가")
-            joint_name = "RIGHT_SHOULDER"
-        self.excercise(joint_name)
+            data = {"joint_name": "RIGHT_SHOULDER",
+                    'level': 3,
+                    'challenge': 10}
+        self.excercise(data)
         
 
 
@@ -171,8 +180,8 @@ class PhysicalRehabWidget(QWidget):
     #         print("Guess Face")
     #         self.emotion()
             
-    def excercise(self, joint_name):
-        self.setPoseWidget(joint_name)
+    def excercise(self, data):
+        self.poseWidget = PoseGUI(self, self.cam, data)
         self.layout.addWidget(self.poseWidget.background)
         self.btnWidget.hide()
         self.layout.setCurrentWidget(self.poseWidget.background)
@@ -195,8 +204,7 @@ class PhysicalRehabWidget(QWidget):
     #     self.layout.setCurrentWidget(self.objectWidget)
     #     self.objectWidget.captureThread.start()
         
-    def setPoseWidget(self, joint_name):
-        self.poseWidget = PoseGUI(self, self.cam, joint_name)
+        
         # self.poseWidget.HomeButton.clicked.connect(self.gameHomeBtn)
         
     # def setEmotionWidget(self):

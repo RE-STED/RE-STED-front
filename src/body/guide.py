@@ -13,16 +13,18 @@ from widget import Pose
 from avatar import Avatar
 
 class PoseGuide(QWidget):
-    def __init__(self, joint_name=None):
+    def __init__(self, data=None):
         super().__init__()
-        self.joint_name = joint_name
+        self.data = data
+        self.joint_name = data['joint_name']
+        self.challenge = data['challenge']
+        self.level = data['level']
+
         self.video_adress = f'data/video/{self.joint_name}.mp4'
         self.json_adress = f'data/Json/{self.joint_name}/C10L10.json'
         self.Pose = Pose()
-        self.Avatar = Avatar(1920, 1080, joint_name=self.joint_name)
+        self.Avatar = Avatar(1920, 1080, data=self.data)
 
-        self.challenge = 10
-        self.level = 3
         self.guide_adress = f'data/Json/{self.joint_name}/C{self.challenge}L{self.level}.json'
 
         self.threshold = 15
@@ -80,7 +82,7 @@ class PoseGuide(QWidget):
             length = len(angle_records)
             for i in range(length):
                 landmarks_records[i] = self.convert_to_Joint(landmarks_records[i])
-                img = self.Avatar.process(landmarks_records[i], joint_name=self.joint_name)
+                img = self.Avatar.process(landmarks_records[i], self.joint_name)
                 cv2.imshow('img', img)
                 cv2.waitKey(30)
     

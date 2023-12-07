@@ -142,7 +142,7 @@ class EmotionWidget(QWidget, EmotionQW):
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("이미지를 변환하는 중입니다...")
         msg.setWindowTitle("진행 중")
-        
+        msg.move(100, 100)
         # 메시지 박스 띄우기
         retval = msg.exec()
         

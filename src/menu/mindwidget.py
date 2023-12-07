@@ -66,11 +66,11 @@ class AppButtonsWidget(QWidget):
 
         for i in range(3):
             if(i == 0):
-                button = AppButton(i, f'Mind Quiz', self)
+                button = AppButton(i, f'Pattern Quiz', self)
             elif(i == 1):
-                button = AppButton(i, f'Find Something', self)
+                button = AppButton(i, f'Object Quiz', self)
             elif(i == 2):
-                button = AppButton(i, f'Guess Face', self)
+                button = AppButton(i, f'Emotion Quiz', self)
             
             button.setFixedSize(170, 170)
 

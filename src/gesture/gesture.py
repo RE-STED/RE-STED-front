@@ -44,6 +44,7 @@ class GestureThread(QThread):
 
 class GestureWidget(QWidget):
 
+
     def __init__(self, parent=None, cam=None):
         super().__init__(parent)
         self.cam = cam
@@ -53,17 +54,21 @@ class GestureWidget(QWidget):
         self.video_label.resize(self.screen_geometry.width(), self.screen_geometry.height())
         self.gesture = None
         self.cursorFlag = False
+        self.gesture = None
+        self.cursorFlag = False
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)  # Set all margins to 0
         self.layout.addWidget(self.video_label)
         
         self.gesture_recognizer = self.initialize_gesture_recognizer()
         self.prev_gesture_queue = deque(maxlen=7)
+        self.prev_gesture_queue = deque(maxlen=7)
         self.start_video()
 
 
     def initialize_gesture_recognizer(self):
         cwd = os.getcwd()
+        model_path = os.path.join(cwd, 'model', 'gesture', 'gesture_recognizer(add_rock).task')
         model_path = os.path.join(cwd, 'model', 'gesture', 'gesture_recognizer(add_rock).task')
         options = mp.tasks.vision.GestureRecognizerOptions(
             base_options=mp.tasks.BaseOptions(model_asset_path=model_path),
@@ -74,6 +79,9 @@ class GestureWidget(QWidget):
 
 
     def moveCursor(self, result, output_image, timestamp_ms):
+        x, y = QCursor.pos().x(), QCursor.pos().y()
+
+
         x, y = QCursor.pos().x(), QCursor.pos().y()
 
 
@@ -132,11 +140,15 @@ class GestureWidget(QWidget):
                     if self.gesture == 'pinch':
                         #calculate the average score of pinch
                         pinch_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'pinch'])
+                        pinch_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'pinch'])
                         if(pinch_score > 0.6):
                             # left click
                             pymouse.PyMouse().press(int(x), int(y), 1)
                     else:
                         pymouse.PyMouse().release(int(x), int(y), 1)
+
+
+                #print(result.gestures[0][0].category_name, result.gestures[0][0].score)
 
 
                 #print(result.gestures[0][0].category_name, result.gestures[0][0].score)

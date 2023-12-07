@@ -7,8 +7,11 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from menu.bodywidget import PhysicalRehabWidget
 from menu.mindwidget import CognitiveRehabWidget
+from menu.bodywidget import PhysicalRehabWidget
+from menu.mindwidget import CognitiveRehabWidget
 from cam import Cam
 
+# from body.gui import PoseGUI
 # from body.gui import PoseGUI
 # from body.main2 import PoseGUI
 
@@ -22,14 +25,7 @@ class MainWindow(QMainWindow):
         self.setStyleSheet("background-color: black;")  # Set background color to black
         
         self.handTrackWidget = GestureWidget(self, self.cam)
-        
-        # # Mind Quiz-------------------------------
-        # self.mindMeneWidget = MenuWidget()
-        
-        # self.mindMeneWidget.PatternBtn.clicked.connect(self.pattern)
-        # self.mindMeneWidget.EmotionBtn.clicked.connect(self.emotion)
-        # self.mindMeneWidget.ODBtn.clicked.connect(self.object)
-        # # ----------------------------------------
+
         
         # Create a stacked layout and add the widgets
         self.layout = QStackedLayout()
@@ -39,10 +35,15 @@ class MainWindow(QMainWindow):
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
         self.hideMouseCursor()
+        self.central_widget = QWidget(self)
+        self.central_widget.setLayout(self.layout)
+        self.setCentralWidget(self.central_widget)
+        self.hideMouseCursor()
 
         #self.layout.setCurrentWidget(self.appLabel)
         self.addAppLabelWidget()
         #self.addBodyWidget()
+
 
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
         
@@ -69,6 +70,20 @@ class MainWindow(QMainWindow):
         central_widget = self.centralWidget()
         if isinstance(central_widget, QWidget):
             central_widget.unsetCursor()
+        self.layout.addWidget(self.appLabelWidget)
+        self.layout.setCurrentWidget(self.appLabelWidget)
+
+
+    def hideMouseCursor(self):
+        central_widget = self.centralWidget()
+        if isinstance(central_widget, QWidget):
+            central_widget.setCursor(Qt.CursorShape.BlankCursor)
+
+
+    def showMouseCursor(self):
+        central_widget = self.centralWidget()
+        if isinstance(central_widget, QWidget):
+            central_widget.unsetCursor()
 
 
     # AppButton이 클릭될 때 실행되는 슬롯
@@ -78,16 +93,29 @@ class MainWindow(QMainWindow):
         elif button_index == 1:
             self.addCognitiveRehabWidget()
     
-    # def deleteAppLabelWidget(self, label_index):
-    #     print(f"Deleting AppLabelWidget triggered by Label {label_index}")
-    #     self.layout.removeWidget(self.appLabelWidget.appLabelWidget)
-    #     self.appLabelWidget.appLabelWidget.deleteLater()
-    #     self.appLabelWidget.deleteLater()
+    def deleteAppLabelWidget(self, label_index):
+        print(f"Deleting AppLabelWidget triggered by Label {label_index}")
+        self.layout.removeWidget(self.appLabelWidget.appLabelWidget)
+        self.appLabelWidget.appLabelWidget.deleteLater()
+        self.appLabelWidget.deleteLater()
 
+        
         
     def addPysicalRehabWidget(self):
         self.appLabelWidget.hide()
+        self.appLabelWidget.hide()
         print("addPysicalRehabWidget")
+        self.physicalRehabWidget = PhysicalRehabWidget(self)
+        self.layout.addWidget(self.physicalRehabWidget)
+        self.layout.setCurrentWidget(self.physicalRehabWidget)
+
+
+    def deletePhysicalRehabWidget(self):
+        print("deletePhysicalRehabWidget")
+        self.layout.removeWidget(self.physicalRehabWidget)
+        self.physicalRehabWidget.deleteLater()
+        self.appLabelWidget.show()
+        self.layout.setCurrentWidget(self.appLabelWidget)
         self.physicalRehabWidget = PhysicalRehabWidget(self)
         self.layout.addWidget(self.physicalRehabWidget)
         self.layout.setCurrentWidget(self.physicalRehabWidget)
@@ -102,6 +130,7 @@ class MainWindow(QMainWindow):
     
     
     def addCognitiveRehabWidget(self):
+        self.appLabelWidget.hide()
         self.appLabelWidget.hide()
         print("addCognitiveRehabWidget")
         self.cognitiveRehabWidget = CognitiveRehabWidget(parent=self, cam=self.cam)

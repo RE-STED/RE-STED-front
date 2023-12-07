@@ -162,6 +162,7 @@ cython_debug/
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Restore Mind
 
 src/mind/Gallery/celeb/
@@ -173,3 +174,6 @@ src/mind/model/
 
 
 .vscode/
+=======
+src/mind/model/
+>>>>>>> main

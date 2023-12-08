@@ -24,6 +24,7 @@ class Thread1(QThread):
         self.Cam = cam
         self.Pose = Pose()
         self.Avatar = Avatar(1920, 1080, data=self.data)
+        self.Avatar.type = 'Avatar'
         
 
     def run(self):
@@ -88,6 +89,7 @@ class Thread2(QThread):
         self.Cam = cv2.VideoCapture(f'data/video/{self.joint_name}.mp4')
         self.Pose = Pose()
         self.Avatar = Avatar(1920, 1080, data=self.data)
+        self.Avatar.type = 'Guide'
         self.Guide = PoseGuide(data=self.data)
         self.Guide.process()
         self.count = 0

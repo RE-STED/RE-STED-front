@@ -20,8 +20,8 @@ class PoseGUI(QWidget):
         self.Cam = cam
         self.data = data
         self.background.setStyleSheet("background-color: rgba(0, 0, 0, 30);")
-        # print("parent 1", self.parent())
-        # print("paren t", self.parent().parent())
+        print("parent 1", self.parent())
+        print("parent 2", self.parent().children)
         # self.background.resize(self.parent().parent())
 
         # thread
@@ -73,7 +73,7 @@ class PoseGUI(QWidget):
 
         # horizion layout
         self.hlayout_button = QHBoxLayout()
-        self.hlayout_button.setContentsMargins(0, 0, 0, 0) # left, top, right, bottom
+        self.hlayout_button.setContentsMargins(0, 50, 0, 0) # left, top, right, bottom
         self.hlayout_button.addWidget(self.countButton)
         self.hlayout_button.addWidget(self.titleButton)
         self.hlayout_button.addWidget(self.homeButton)
@@ -81,7 +81,7 @@ class PoseGUI(QWidget):
         # self.videoWidget = QWidget()
         # self.videoWidget.setWindowOpacity(0.9)
         self.hlayout_video = QHBoxLayout()
-        self.hlayout_video.setContentsMargins(0, 0, 0, 0)
+        self.hlayout_video.setContentsMargins(0, 0, 0, 50)
         self.hlayout_video.addWidget(self.image_pose)
         self.hlayout_video.addWidget(self.image_guide)
 

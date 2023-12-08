@@ -7,6 +7,7 @@ from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
 import math
 from PyQt6.QtWidgets import QWidget
+import os
 
 
 from widget import Pose
@@ -19,6 +20,7 @@ class PoseGuide(QWidget):
         self.joint_name = data['joint_name']
         self.challenge = data['challenge']
         self.level = data['level']
+        self.json_adress = f'data/Json/{self.joint_name}/C{self.challenge}L{self.level}.json'
 
         self.video_adress = f'data/video/{self.joint_name}.mp4'
         self.json_adress = f'data/Json/{self.joint_name}/C10L10.json'
@@ -30,7 +32,9 @@ class PoseGuide(QWidget):
         self.threshold = 15
 
     def process(self):
-        # self.saveVideo(self.video_adress)
+        dir = os.listdir(f'data/Json/{self.joint_name}')
+        if f'C{self.challenge}L{self.level}.json' not in dir:
+            self.saveVideo(self.video_adress)
         file = self.loadJson(self.json_adress)
         self.angle_records = file['angle_records']
         self.landmarks_records = file['landmarks_records']
@@ -69,6 +73,7 @@ class PoseGuide(QWidget):
             # save joint info
             landmarks_records.append(self.Pose.convert_to_dict())
             angle_records.append(self.Pose.joint_pos_dict[self.joint_name].angle)
+            print('video saving...')
         Cam.release()
         data = {'angle_records': angle_records, 'landmarks_records': landmarks_records, 'challenge': 10, 'level': 10, 'joint_name': joint_name}
         json_adress = f'data/Json/{joint_name}/C10L10.json'
@@ -267,19 +272,21 @@ class PoseGuide(QWidget):
         self.saveJson(data, json_adress)
     
     # ------------------- plot -------------------
-    def plotAngle(self):
-        title = str(self.json_adress.split('/')[-1].split('.')[0])    
-        plt.plot(self.angle_records)
+    def plotAngle(self, angle_records, json_adress):
+        title = str(json_adress.split('/')[-1].split('.')[0])    
+        fig = plt.figure(figsize=(20, 10))
+        fig.plot(angle_records)
 
-        self.plot_clusters(self.peaks, mode='peaks')
-        self.plot_clusters(self.vallys, mode='vallys')
+        self.plot_clusters(fig, self.peaks, mode='peaks')
+        self.plot_clusters(fig, self.vallys, mode='vallys')
 
-        plt.title(title)
-        plt.xlabel('Frame')
-        plt.ylabel('Angle (degrees)')
-        plt.show()
+        fig.title(title)
+        fig.xlabel('Frame')
+        fig.ylabel('Angle (degrees)')
+        return fig
+        # plt.show()
 
-    def plot_clusters(self, clusters, mode='peaks'):
+    def plot_clusters(self, fig, clusters, mode='peaks'):
         cluster_colors = ['red', 'green', 'purple', 'orange', 'cyan', 'brown', 'pink', 'gray']
         marker = 'o'
         if mode == 'peaks':
@@ -288,7 +295,7 @@ class PoseGuide(QWidget):
         for i, cluster in enumerate(clusters):
             cluster_x = cluster
             cluster_y = [self.angle_records[c] for c in cluster]
-            plt.scatter(cluster_x, cluster_y, color=cluster_colors[i], label=f'{mode} {i+1}', marker=marker)
+            fig.scatter(cluster_x, cluster_y, color=cluster_colors[i], label=f'{mode} {i+1}', marker=marker)
 
 class JointDict:
     def __init__(self, landmark):

@@ -224,25 +224,25 @@ class PhysicalRehabWidget(QWidget):
         if button_index == 0:
             print("0번째 운동 실행")
             data = {"joint_name": "RIGHT_SHOULDER",
-                    'level': 3,
+                    'level': self.level,
                     'challenge': 10}
             
         elif button_index == 1:
             print("1번째 운동 실행")
             data = {"joint_name": "RIGHT_ELBOW",
-                    'level': 5,
+                    'level': self.level,
                     'challenge': 10}
             
         elif button_index == 2:
             print("2번째 운동 실행")
             data = {"joint_name": "RIGHT_KNEE",
-                    'level': 5,
+                    'level': self.level,
                     'challenge': 10}
             
         elif button_index == 3:
             print("운동 추가")
             data = {"joint_name": "RIGHT_SHOULDER",
-                    'level': 3,
+                    'level': self.level,
                     'challenge': 10}
         self.excercise(data)
         

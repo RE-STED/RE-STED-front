@@ -3,13 +3,14 @@ import numpy as np
 from PyQt6.QtWidgets import QWidget
 
 class Avatar(QWidget):
-    def __init__(self, width, height, data=None):
+    def __init__(self, width, height, data=None, type='avatar'):
         super().__init__()
         self.data = data
         self.joint_name = data['joint_name']
 
         self.width = width
         self.height = height
+        self.type = 'Avatar'  # 'Guide' and 'Avatar'
     
     def process(self, joint_pos_dict, joint_name=None):
         # 1. extract center
@@ -49,10 +50,13 @@ class Avatar(QWidget):
         if joint_name is None:
             return img
         img = cv2.flip(img, 1)
-        # putText -> text font size = 
+        # putText type in top center
+        cv2.putText(img, "{}".format(self.type),
+                    (int(self.w * 0.35), int(self.height * 0.1)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 0), 1, cv2.CALIB_CB_ASYMMETRIC_GRID)
         cv2.putText(img, "{}".format(int(joint_pos_dict[joint_name].angle)),
-                    (int(self.w * 0.1), int(self.height * 0.2)),
-                    cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 3, cv2.LINE_AA)
+                    (int(self.w * 0.08), int(self.height * 0.15)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 3, cv2.CAP_XINE)
         img = cv2.flip(img, 1)
         return img
 

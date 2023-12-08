@@ -76,20 +76,6 @@ class GestureWidget(QWidget):
     def moveCursor(self, result, output_image, timestamp_ms):
         x, y = QCursor.pos().x(), QCursor.pos().y()
 
-
-        if result.hand_landmarks:
-            if hasattr(self, 'image_height') and self.cursorFlag == True:
-            # point is relative to the image size + widget absolute position
-                x = statistics.mean([result.hand_landmarks[0][0].x * self.image_height, 
-                                    result.hand_landmarks[0][3].x * self.image_height, 
-                                    result.hand_landmarks[0][9].x * self.image_height, 
-                                    result.hand_landmarks[0][17].x * self.image_height]) + self.screen_geometry.x() + self.mapToGlobal(self.video_label.pos()).x()
-                y = statistics.mean([result.hand_landmarks[0][0].y * self.image_width,
-                                    result.hand_landmarks[0][9].y * self.image_width, 
-                                    result.hand_landmarks[0][3].y * self.image_width, 
-                                    result.hand_landmarks[0][17].y * self.image_width]) + self.screen_geometry.y() + self.mapToGlobal(self.video_label.pos()).y()
-            
-
         if result.gestures:
             if(len(result.gestures) > 0):
                 self.prev_gesture_queue.append((result.gestures[0][0].category_name, result.gestures[0][0].score))
@@ -140,6 +126,18 @@ class GestureWidget(QWidget):
 
 
                 #print(result.gestures[0][0].category_name, result.gestures[0][0].score)
+            if result.hand_landmarks:
+                if hasattr(self, 'image_height') and self.cursorFlag == True and (self.gesture == 'palmOn' or self.gesture == 'pinch' or self.gesture == 'rock'):
+                    # point is relative to the image size + widget absolute position
+                    x = statistics.mean([result.hand_landmarks[0][0].x * self.image_height, 
+                                        result.hand_landmarks[0][3].x * self.image_height, 
+                                        result.hand_landmarks[0][9].x * self.image_height, 
+                                        result.hand_landmarks[0][17].x * self.image_height]) + self.screen_geometry.x() + self.mapToGlobal(self.video_label.pos()).x()
+                    y = statistics.mean([result.hand_landmarks[0][0].y * self.image_width,
+                                        result.hand_landmarks[0][9].y * self.image_width, 
+                                        result.hand_landmarks[0][3].y * self.image_width, 
+                                        result.hand_landmarks[0][17].y * self.image_width]) + self.screen_geometry.y() + self.mapToGlobal(self.video_label.pos()).y()
+            
 
             QCursor.setPos(int(x), int(y))
             QGuiApplication.processEvents()

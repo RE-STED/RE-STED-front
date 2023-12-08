@@ -59,9 +59,9 @@ class PoseGUI(QWidget):
 
 
         opacity_effect_pose = QGraphicsOpacityEffect()
-        opacity_effect_pose.setOpacity(0.5)  # 0.0부터 1.0까지의 값을 설정하여 투명도를 조절할 수 있습니다.
+        opacity_effect_pose.setOpacity(0.9)  # 0.0부터 1.0까지의 값을 설정하여 투명도를 조절할 수 있습니다.
         opacity_effect_guide = QGraphicsOpacityEffect()
-        opacity_effect_guide.setOpacity(0.5)  # 0.0부터 1.0까지의 값을 설정하여 투명도를 조절할 수 있습니다.
+        opacity_effect_guide.setOpacity(0.9)  # 0.0부터 1.0까지의 값을 설정하여 투명도를 조절할 수 있습니다.
 
         self.image_pose = QLabel()
         self.image_pose.setScaledContents(True)
@@ -72,37 +72,23 @@ class PoseGUI(QWidget):
         self.image_guide.setGraphicsEffect(opacity_effect_guide)
 
         # horizion layout
-        self.buttonWidget = QWidget()
-        self.widget = QWidget()
-        self.widget.setWindowOpacity(0.0)
-        # self.buttonWidget.setWindowOpacity(0.5)
         self.hlayout_button = QHBoxLayout()
-        # self.hlayout_button.setContentsMargins(0, 50, 0, 0) # left, top, right, bottom
+        self.hlayout_button.setContentsMargins(0, 0, 0, 0) # left, top, right, bottom
         self.hlayout_button.addWidget(self.countButton)
         self.hlayout_button.addWidget(self.titleButton)
         self.hlayout_button.addWidget(self.homeButton)
-        self.vlayout_button = QVBoxLayout(self.buttonWidget)
-        self.vlayout_button.addLayout(self.hlayout_button)
-        self.vlayout_button.addWidget(self.widget)
 
-        self.videoWidget = QWidget()
-        self.videoWidget.setWindowOpacity(0.5)
-        self.hlayout_video = QHBoxLayout(self.videoWidget)
-        # self.hlayout_video.setContentsMargins(0, 0, 0, 50)
+        # self.videoWidget = QWidget()
+        # self.videoWidget.setWindowOpacity(0.9)
+        self.hlayout_video = QHBoxLayout()
+        self.hlayout_video.setContentsMargins(0, 0, 0, 0)
         self.hlayout_video.addWidget(self.image_pose)
         self.hlayout_video.addWidget(self.image_guide)
 
-
-        self.slayout = QStackedLayout(self.background)
-        self.slayout.setStackingMode(QStackedLayout.StackingMode.StackAll)
-        self.slayout.addWidget(self.buttonWidget)
-        self.slayout.addWidget(self.videoWidget)
-
         # verteical layout
-        vlayout = QVBoxLayout()
         vlayout = QVBoxLayout(self.background)
-        vlayout.addLayout(self.slayout)
-        vlayout.setAlignment(self.slayout, Qt.AlignmentFlag.AlignTop)
+        vlayout.addLayout(self.hlayout_button)
+        vlayout.addLayout(self.hlayout_video)
 
         self.background.setLayout(vlayout)
 

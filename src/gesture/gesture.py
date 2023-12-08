@@ -44,7 +44,6 @@ class GestureThread(QThread):
 
 class GestureWidget(QWidget):
 
-
     def __init__(self, parent=None, cam=None):
         super().__init__(parent)
         self.cam = cam
@@ -54,21 +53,17 @@ class GestureWidget(QWidget):
         self.video_label.resize(self.screen_geometry.width(), self.screen_geometry.height())
         self.gesture = None
         self.cursorFlag = False
-        self.gesture = None
-        self.cursorFlag = False
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)  # Set all margins to 0
         self.layout.addWidget(self.video_label)
         
         self.gesture_recognizer = self.initialize_gesture_recognizer()
         self.prev_gesture_queue = deque(maxlen=7)
-        self.prev_gesture_queue = deque(maxlen=7)
         self.start_video()
 
 
     def initialize_gesture_recognizer(self):
         cwd = os.getcwd()
-        model_path = os.path.join(cwd, 'model', 'gesture', 'gesture_recognizer(add_rock).task')
         model_path = os.path.join(cwd, 'model', 'gesture', 'gesture_recognizer(add_rock).task')
         options = mp.tasks.vision.GestureRecognizerOptions(
             base_options=mp.tasks.BaseOptions(model_asset_path=model_path),
@@ -80,23 +75,6 @@ class GestureWidget(QWidget):
 
     def moveCursor(self, result, output_image, timestamp_ms):
         x, y = QCursor.pos().x(), QCursor.pos().y()
-
-
-        x, y = QCursor.pos().x(), QCursor.pos().y()
-
-
-        if result.hand_landmarks:
-            if hasattr(self, 'image_height') and self.cursorFlag == True:
-            # point is relative to the image size + widget absolute position
-                x = statistics.mean([result.hand_landmarks[0][0].x * self.image_height, 
-                                    result.hand_landmarks[0][3].x * self.image_height, 
-                                    result.hand_landmarks[0][9].x * self.image_height, 
-                                    result.hand_landmarks[0][17].x * self.image_height]) + self.screen_geometry.x() + self.mapToGlobal(self.video_label.pos()).x()
-                y = statistics.mean([result.hand_landmarks[0][0].y * self.image_width,
-                                    result.hand_landmarks[0][9].y * self.image_width, 
-                                    result.hand_landmarks[0][3].y * self.image_width, 
-                                    result.hand_landmarks[0][17].y * self.image_width]) + self.screen_geometry.y() + self.mapToGlobal(self.video_label.pos()).y()
-            
 
         if result.gestures:
             if(len(result.gestures) > 0):
@@ -114,32 +92,31 @@ class GestureWidget(QWidget):
                             self.cursorFlag = True
                             self.gesture = 'rock'
                             self.window().showMouseCursor()
-                            #print("cursor on")
+                            print("cursor on")
                         
                         else:
                             self.cursorFlag = False
                             self.gesture = 'rock'
                             self.window().hideMouseCursor()
-                            #print("cursor off")
+                            print("cursor off")
                 
                 elif common_gesture[0][0] == 'palmOn' and common_gesture[0][1] >= 5:
                     #calculate the average score of paper
                     self.gesture = 'palmOn'
-                    #print("palmOn")
+                    print("palmOn")
 
                 elif common_gesture[0][0] == 'pinch':
                     self.gesture = 'pinch'
-                    #print("pinch")
+                    print("pinch")
                 
                 else:
                     self.gesture = 'None'
-                    #print("None")
+                    print("None")
 
                 #if prev_gesture_queue has pinch, then click
                 if self.cursorFlag == True:
                     if self.gesture == 'pinch':
                         #calculate the average score of pinch
-                        pinch_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'pinch'])
                         pinch_score = statistics.mean([value[1] for value in prev_gesture_list if value[0] == 'pinch'])
                         if(pinch_score > 0.6):
                             # left click
@@ -149,9 +126,18 @@ class GestureWidget(QWidget):
 
 
                 #print(result.gestures[0][0].category_name, result.gestures[0][0].score)
-
-
-                #print(result.gestures[0][0].category_name, result.gestures[0][0].score)
+            if result.hand_landmarks:
+                if hasattr(self, 'image_height') and self.cursorFlag == True and (self.gesture == 'palmOn' or self.gesture == 'pinch' or self.gesture == 'rock'):
+                    # point is relative to the image size + widget absolute position
+                    x = statistics.mean([result.hand_landmarks[0][0].x * self.image_height, 
+                                        result.hand_landmarks[0][3].x * self.image_height, 
+                                        result.hand_landmarks[0][9].x * self.image_height, 
+                                        result.hand_landmarks[0][17].x * self.image_height]) + self.screen_geometry.x() + self.mapToGlobal(self.video_label.pos()).x()
+                    y = statistics.mean([result.hand_landmarks[0][0].y * self.image_width,
+                                        result.hand_landmarks[0][9].y * self.image_width, 
+                                        result.hand_landmarks[0][3].y * self.image_width, 
+                                        result.hand_landmarks[0][17].y * self.image_width]) + self.screen_geometry.y() + self.mapToGlobal(self.video_label.pos()).y()
+            
 
             QCursor.setPos(int(x), int(y))
             QGuiApplication.processEvents()

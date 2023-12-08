@@ -7,8 +7,6 @@ from gesture.gesture import GestureWidget
 from menu.appwidget import AppWidget
 from menu.bodywidget import PhysicalRehabWidget
 from menu.mindwidget import CognitiveRehabWidget
-from menu.bodywidget import PhysicalRehabWidget
-from menu.mindwidget import CognitiveRehabWidget
 from cam import Cam
 
 # from body.gui import PoseGUI
@@ -35,15 +33,10 @@ class MainWindow(QMainWindow):
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
         self.hideMouseCursor()
-        self.central_widget = QWidget(self)
-        self.central_widget.setLayout(self.layout)
-        self.setCentralWidget(self.central_widget)
-        self.hideMouseCursor()
 
         #self.layout.setCurrentWidget(self.appLabel)
         self.addAppLabelWidget()
         #self.addBodyWidget()
-
 
         self.layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
         
@@ -56,20 +49,6 @@ class MainWindow(QMainWindow):
 
     def addAppLabelWidget(self):
         self.appLabelWidget = AppWidget(self)
-        self.layout.addWidget(self.appLabelWidget)
-        self.layout.setCurrentWidget(self.appLabelWidget)
-
-
-    def hideMouseCursor(self):
-        central_widget = self.centralWidget()
-        if isinstance(central_widget, QWidget):
-            central_widget.setCursor(Qt.CursorShape.BlankCursor)
-
-
-    def showMouseCursor(self):
-        central_widget = self.centralWidget()
-        if isinstance(central_widget, QWidget):
-            central_widget.unsetCursor()
         self.layout.addWidget(self.appLabelWidget)
         self.layout.setCurrentWidget(self.appLabelWidget)
 
@@ -100,23 +79,10 @@ class MainWindow(QMainWindow):
         self.appLabelWidget.deleteLater()
 
         
-        
     def addPysicalRehabWidget(self):
         self.appLabelWidget.hide()
-        self.appLabelWidget.hide()
         print("addPysicalRehabWidget")
-        self.physicalRehabWidget = PhysicalRehabWidget(self)
-        self.layout.addWidget(self.physicalRehabWidget)
-        self.layout.setCurrentWidget(self.physicalRehabWidget)
-
-
-    def deletePhysicalRehabWidget(self):
-        print("deletePhysicalRehabWidget")
-        self.layout.removeWidget(self.physicalRehabWidget)
-        self.physicalRehabWidget.deleteLater()
-        self.appLabelWidget.show()
-        self.layout.setCurrentWidget(self.appLabelWidget)
-        self.physicalRehabWidget = PhysicalRehabWidget(self)
+        self.physicalRehabWidget = PhysicalRehabWidget(self, self.cam)
         self.layout.addWidget(self.physicalRehabWidget)
         self.layout.setCurrentWidget(self.physicalRehabWidget)
 

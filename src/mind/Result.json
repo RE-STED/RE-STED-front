@@ -123,5 +123,49 @@
                 "Who": "남동생"
             }
         ]
+    },
+    "2023-12-08": {
+        "Pattern": [
+            {
+                "Time": "12:46:49",
+                "Pattern": "🔵",
+                "Number": 2,
+                "Score": 80,
+                "Level": 3
+            }
+        ],
+        "Object": [
+            {
+                "Time": "02:33:49",
+                "Object": "bottle",
+                "Success": 1
+            }
+        ],
+        "Emotion": [
+            {
+                "Time": "02:36:29",
+                "Emotion": "sad",
+                "Score": 100,
+                "Who": "엄마"
+            },
+            {
+                "Time": "02:37:15",
+                "Emotion": "neutral",
+                "Score": 100,
+                "Who": "남동생"
+            },
+            {
+                "Time": "02:38:29",
+                "Emotion": "fearful",
+                "Score": 100,
+                "Who": "엄마"
+            },
+            {
+                "Time": "02:39:33",
+                "Emotion": "sad",
+                "Score": 100,
+                "Who": "아빠"
+            }
+        ]
     }
 }

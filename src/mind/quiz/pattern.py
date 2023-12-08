@@ -48,7 +48,7 @@ class FindPatterns(PatternWindow):
         self.lon = {1 : [0, 7, 8], 2:[1, 4, 6, 9], 3:[2, 3, 5]}
         
         self.target_tile = random.choice(list(self.tile.keys()))
-        self.Result['Pattern'] = self.target_tile
+        self.Result['Pattern'] = self.tile[self.target_tile]
         
         # QusetionText의 글자 크기를 조절하려면
         self.QuestionText.setStyleSheet("font-size: 40pt;")

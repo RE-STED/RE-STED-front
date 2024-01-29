@@ -5,6 +5,8 @@
 - Interactive Hand jesture UI/UX (hand Jesture mouse)
 - Pysical rehabilitation excercise guide (pose Avatar Guide)
 - Mind rehabilitation tools (Quiz using AI GAN, Object detection)
+- [video](https://youtu.be/IhRuywCObck)
+- [presentation](https://github.com/RE-STED/RE-STED-front/tree/main/pdf)
 
 ## 2. Develop enviroments
 - **language** : python
@@ -35,6 +37,7 @@ python -m pip install -r requirements.txt
 ```
 python src/main.py
 ```
+4. To use this program, please watch this [tutorial](https://youtu.be/IhRuywCObck)
 
 ## 4. Reference
 - [mediapipe](https://developers.google.com/mediapipe)

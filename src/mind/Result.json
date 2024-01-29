@@ -132,6 +132,13 @@
                 "Number": 2,
                 "Score": 80,
                 "Level": 3
+            },
+            {
+                "Time": "16:13:03",
+                "Pattern": "🔵",
+                "Number": 5,
+                "Score": 100,
+                "Level": 3
             }
         ],
         "Object": [
@@ -165,6 +172,68 @@
                 "Emotion": "sad",
                 "Score": 100,
                 "Who": "아빠"
+            },
+            {
+                "Time": "16:07:06",
+                "Emotion": "neutral",
+                "Score": 90,
+                "Who": "아빠"
+            },
+            {
+                "Time": "16:07:25",
+                "Emotion": "neutral",
+                "Score": 100,
+                "Who": "아빠"
+            },
+            {
+                "Time": "16:08:02",
+                "Emotion": "fearful",
+                "Score": 80,
+                "Who": "아빠"
+            },
+            {
+                "Time": "16:08:22",
+                "Emotion": "surprised",
+                "Score": 100,
+                "Who": "아빠"
+            },
+            {
+                "Time": "16:14:52",
+                "Emotion": "sad",
+                "Score": 40,
+                "Who": "아빠"
+            }
+        ]
+    },
+    "2023-12-12": {
+        "Pattern": [
+            {
+                "Time": "21:23:24",
+                "Pattern": "🔵",
+                "Number": 2,
+                "Score": 100,
+                "Level": 3
+            }
+        ],
+        "Object": [],
+        "Emotion": [
+            {
+                "Time": "21:24:24",
+                "Emotion": "sad",
+                "Score": 70,
+                "Who": "아빠"
+            }
+        ]
+    },
+    "2023-12-23": {
+        "Pattern": [],
+        "Object": [],
+        "Emotion": [
+            {
+                "Time": "15:26:09",
+                "Emotion": "surprised",
+                "Score": 100,
+                "Who": "아빠"
             }
         ]
     }

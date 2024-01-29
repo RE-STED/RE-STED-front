@@ -253,3 +253,10 @@ class PhysicalRehabWidget(QWidget):
         self.layout.addWidget(self.poseWidget.background)
         self.btnWidget.hide()
         self.layout.setCurrentWidget(self.poseWidget.background)
+
+    def deletePoseWidget(self):
+        print("Deleting PhysicalRehabWidget")
+        self.layout.removeWidget(self.poseWidget.background)
+        self.poseWidget.background.deleteLater()
+        self.poseWidget.deleteLater()
+        self.btnWidget.show()

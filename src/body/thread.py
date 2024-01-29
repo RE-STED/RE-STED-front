@@ -1,10 +1,8 @@
-import typing
-from PyQt6.QtCore import QObject, QThread, pyqtSignal, Qt
+from PyQt6.QtCore import QThread, pyqtSignal, Qt
 from PyQt6.QtGui import QImage
 from PyQt6.QtWidgets import QApplication
 
 import cv2
-# from body.widget import Pose
 from widget import Pose
 from avatar import Avatar
 from guide import PoseGuide

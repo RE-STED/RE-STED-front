@@ -9,10 +9,6 @@ from menu.bodywidget import PhysicalRehabWidget
 from menu.mindwidget import CognitiveRehabWidget
 from cam import Cam
 
-# from body.gui import PoseGUI
-# from body.gui import PoseGUI
-# from body.main2 import PoseGUI
-
 
 class MainWindow(QMainWindow):
     def __init__(self):

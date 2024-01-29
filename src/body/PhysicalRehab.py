@@ -1,9 +1,8 @@
 import sys
 import cv2
 
-from PyQt6.QtWidgets import *
-from PyQt6.QtGui import *
-from PyQt6.QtCore import *
+from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QGraphicsOpacityEffect, QHBoxLayout, QVBoxLayout, QMainWindow, QApplication
+from PyQt6.QtGui import QPixmap
 
 sys.path.append('src/body')
 from thread import Thread1, Thread2
@@ -39,13 +38,13 @@ class PoseGUI(QWidget):
         self.countButton.setFixedSize(200, 100)
         self.countButton.setStyleSheet("background-color: rgba(0, 200, 0, 200);"
                                             "color: white;"
-                                            "font-size: 50px;")
+                                            "font-size: 50px; border-radius: 0.5em;")
         self.countButton.clicked.connect(self.toggle)
 
         # title button
         self.titleButton = QPushButton(f'{self.data["joint_name"]} - level: {self.data["level"]}/{self.data["challenge"]}')
         self.titleButton.setStyleSheet("background-color: rgba(255, 255, 255, 200);"
-                                            "font-size: 25px;")
+                                            "font-size: 25px; border-radius: 0.7em;")
         self.titleButton.setFixedHeight(100)
 
         # home button
@@ -53,8 +52,8 @@ class PoseGUI(QWidget):
         self.homeButton.setFixedSize(200, 100)
         self.homeButton.setStyleSheet("background-color: rgba(0, 0, 0, 200);"
                                             "color: white;"
-                                            "font-size: 50px;")
-        # self.homeButton.clicked.connect(self.parent.parent.deletePhysicalRehabWidget)
+                                            "font-size: 50px; border-radius: 0.7em;")
+        self.homeButton.clicked.connect(self.parent().deletePoseWidget)
 
 
 
@@ -64,10 +63,12 @@ class PoseGUI(QWidget):
         opacity_effect_guide.setOpacity(0.9)  # 0.0부터 1.0까지의 값을 설정하여 투명도를 조절할 수 있습니다.
 
         self.image_pose = QLabel()
+        self.image_pose.setStyleSheet("border-radius: 1.5em;")
         self.image_pose.setScaledContents(True)
         self.image_pose.setGraphicsEffect(opacity_effect_pose)
 
         self.image_guide = QLabel()
+        self.image_guide.setStyleSheet("border-radius: 1.5em;")
         self.image_guide.setScaledContents(True)
         self.image_guide.setGraphicsEffect(opacity_effect_guide)
 
@@ -123,6 +124,7 @@ class PoseGUI(QWidget):
             self.countButton.setStyleSheet("background-color: rgba(200, 0, 0, 200);"
                                             "color: white;"
                                             "font-size: 50px;"
+                                            "border-radius: 0.5em;"
                                             )
         else: # start
             self.working = True
@@ -133,6 +135,7 @@ class PoseGUI(QWidget):
             self.countButton.setStyleSheet("background-color: rgba(0, 200, 0, 200);"
                                             "color: white;"
                                             "font-size: 50px;"
+                                            "border-radius: 0.5em;"
                                             )
 
 
@@ -140,7 +143,7 @@ class PoseGUI(QWidget):
 # gui3 for botton
 
 if __name__ == '__main__':
-    data = {"joint_name": "RIGHT_SHOULDER",
+    data = {"joint_name": "RIGHT_ELBOW",
                     'level': 3,
                     'challenge': 10}
     class Cami():

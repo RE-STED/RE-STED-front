@@ -9,10 +9,10 @@ import math
 from PyQt6.QtWidgets import QWidget
 import os
 
-
 from widget import Pose
 from avatar import Avatar
 
+# make a guide for each joint and level
 class PoseGuide(QWidget):
     def __init__(self, data=None):
         super().__init__()

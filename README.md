@@ -1,5 +1,5 @@
 # RE-STED-front
-> rehabilitation excercise tools and Interative UI using of AI
+> rehabilitation excercise tools and Interative UI using AI
 
 ## 1. About Project 
 - Interactive Hand jesture UI/UX (hand Jesture mouse)
